@@ -1,93 +1,52 @@
-
-'use strict';
-import React, { Component } from 'react';
-
-import { StyleSheet, View } from 'react-native';
+import React from 'react';
+import { Text, View, Dimensions, Image, Alert, FlatList, TextInput } from 'react-native';
+import SearchBar from 'react-native-search-bar';
+import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
+import { Icon } from 'react-native-elements';
+import { Rating, AirbnbRating } from 'react-native-ratings';
+import styles from './styles';
 import WooCommerce from './wooApi';
+import AsyncStorage from '@react-native-community/async-storage'
+import {
+	BallIndicator,
+	BarIndicator,
+	DotIndicator,
+	MaterialIndicator,
+	PacmanIndicator,
+	PulseIndicator,
+	SkypeIndicator,
+	UIActivityIndicator,
+	WaveIndicator,
+} from 'react-native-indicators';
 
-//import WooCommerceAPI from 'react-native-woocommerce-api';
-import WooCommerceAPI from 'react-native-wc-api';
+const { width, height } = Dimensions.get('window')
 
-// var WooCommerceAPI1 = new WooCommerceAPI({
-//   url: 'https://mimiandbowbow.com/test', // Your store URL
-//   ssl: true,
-//   consumerKey: 'ck_b34ef05e06c5ed2552985cecf0bcdb2b1d12980d', // Your consumer secret
-//   consumerSecret: 'cs_195a049ec42844c5e62aff632c40a6f8f51ca04c', // Your consumer secret
-//   wpAPI: true, // Enable the WP REST API integration
-//   version: 'wc/v3', // WooCommerce WP REST API version
-//   queryStringAuth: true
-// });
-
-// const WooCommerce = new WooCommerceAPI({
-//   url: 'http://mimiandbowbow.com/test',  //Url
-//   consumerKey: 'ck_b34ef05e06c5ed2552985cecf0bcdb2b1d12980d',   //Your Consumer Key
-//   consumerSecret: 'cs_195a049ec42844c5e62aff632c40a6f8f51ca04c',  //Your Consumer Secret
-//   wpAPI: true,
-//   version: 'wc/v3',
-//   queryStringAuth: true,
-//   ssl: true,
-// }); 
-
-export default class App extends React.Component{
-
-  constructor(props) {
-    super(props);
-  }
-
-  componentDidMount() {
-    WooCommerce.get('products').then(response => {
-      console.log(response.data[0].name);
-        }).catch(error => {
-            console.log(error + "123");
-        });
-
-  }
-
-  
-
-  render() {
-    return (
-      <View style={styles.container}>
-       
-        <View style={styles.CircleShapeView}>
-        </View>
+export default class App extends React.Component {
 
 
-        <View style={styles.OvalShapeView} >
+	render() {
+		return (
+			<View style={{ flex: 1, backgroundColor: '#f5c711' }}>
+				<View style={{ flexDirection: 'row', height: height * .1, alignItems: 'center', justifyContent: 'space-between', margin: width * .05 }}>
+					<TouchableOpacity
+						onPress={() => { this.props.navigation.toggleDrawer(); }}
+					>
+						<Icon name='menu' size={40} type='material-icons' color='#343434' />
+					</TouchableOpacity>
+					<Image
+						source={require('../images/logo.png')}
+						style={{ width: height * .07, height: height * .07 }}
+					/>
+					<Text style={{ fontFamily: 'Montserrat-Regular', fontSize: 17 }}>
+						Mimi and Bow Bow
+					</Text>
+					<Icon name='cart' size={40} type='material-community' color='#343434' />
+				</View>
+				<View style={{ flexDirection: 'row', height: height * .1, alignItems: 'center', justifyContent: 'space-between', marginLeft: width * .05, marginRight: width * .05 }}>
+					<Text style={[styles.TitleText, { fontFamily: 'Montserrat-SemiBold', fontSize: 20 }]}>Coming Soon....</Text>
 
-        </View>
-
-      </View>
-    );
-  }
+				</View>
+			</View>
+		);
+	}
 }
-
-
-const styles = StyleSheet.create({
-
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    margin: 10
-  },
-
-  CircleShapeView: {
-    width: 150,
-    height: 150,
-    borderRadius: 150/2,
-    backgroundColor: '#00BCD4'
-},
-
-OvalShapeView: {
-  marginTop: 20,
-  width: 100,
-  height: 100,
-  backgroundColor: '#00BCD4',
-  borderRadius: 50,
-  transform: [
-    {scaleX: 5}
-  ]
-},
-
-});

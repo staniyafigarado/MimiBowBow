@@ -74,6 +74,21 @@ export default class App extends React.Component {
         //   } catch (e) {
         //     console.log('Failed to clear the async storage.')
         //   }
+        const datePicked = await AsyncStorage.getItem('datePicked')
+        let newDate = JSON.parse(datePicked);
+        if( !newDate ){
+            newDate = []
+        }
+        newDate.push(null);
+        await AsyncStorage.setItem('datePicked',JSON.stringify(newDate)) 
+        .then( ()=>{
+        console.log('It was saved successfully')
+        } )
+        .catch( ()=>{
+        console.log('There was an error saving the product')
+        } )
+
+        
     }
     goToCart = async () =>{
         const existingProducts = await AsyncStorage.getItem('cart')
@@ -105,7 +120,9 @@ export default class App extends React.Component {
 		return (
 			<View style={{ flex: 1, backgroundColor:'#f5c711'}}>
 				<View style={{flexDirection:'row', height:height*.1, alignItems:'center', justifyContent:'space-between', margin:width*.05}}>
-					<TouchableOpacity onPress={() => { this.props.navigation.toggleDrawer(); }}>
+                <TouchableOpacity 
+                    //onPress={() => { this.props.navigation.toggleDrawer(); }}
+                    >
 						<Icon name='menu' size={40} type='material-icons' color='#343434'/>
 					</TouchableOpacity>
 					<Image
@@ -135,16 +152,9 @@ export default class App extends React.Component {
                         <View style={{height:height*.35, backgroundColor:'rgba(255,255,255,1)',padding:width*.05}}>
                             <Text style={{ fontSize:23,fontFamily:'Montserrat-Medium'}}>Price : ₹{this.state.productData.price}‎ </Text>
                             <View style={{flexDirection:'row', alignItems:'center', justifyContent:'space-between'}}>
-                                <Rating
-                                    type='custom'
-                                    ratingColor='#f5c711'
-                                    ratingBackgroundColor='white'
-                                    ratingCount={5}
-                                    imageSize={20}
-                                    style={{ paddingVertical: 10 }}
-                                    />
-                                <Text style={{fontFamily:'Montserrat-Regular', fontSize:12}}>4/5 rating</Text>
-                                <Text style={{fontFamily:'Montserrat-Regular', fontSize:12}}>(673 reviews)</Text>
+                            <Rating imageSize={15} readonly startingValue={this.state.productData.average_rating} />
+                                <Text style={{fontFamily:'Montserrat-Regular', fontSize:12}}>{Number(this.state.productData.average_rating)}/5 rating</Text>
+                                <Text style={{fontFamily:'Montserrat-Regular', fontSize:12}}>({this.state.productData.rating_count} reviews)</Text>
                             </View>
                             <Text style={{fontFamily:'Montserrat-Regular', color:'rgba(0,0,0,1)'}}>Description</Text>
                             <Text style={{fontFamily:'Montserrat-Regular', fontSize:11, color:'rgba(0,0,0,.7)'}} numberOfLines={2}>{this.state.productData.description}</Text>
@@ -155,7 +165,8 @@ export default class App extends React.Component {
                             :
                             <TouchableOpacity onPress={() => this.props.navigation.navigate('CartPage')} style={{width:width*.8,marginTop:width*.05 ,alignItems:'center', justifyContent:'center', backgroundColor:'#343434',height:height*0.08, borderRadius:3}}>
                                 <Text style={[styles.TextiputHeader,{ color:'rgba(255,255,255,1)'}]}>GO TO CART</Text>
-                            </TouchableOpacity>}
+                            </TouchableOpacity>
+                            }
 
                         </View>
 
