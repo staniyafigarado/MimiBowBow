@@ -68,9 +68,9 @@ import logOut from '../screens/logOut';
 import doctorsList from '../screens/doctorsList';
 import doctorDetails from '../screens/doctorDetails';
 import userReg from '../screens/userReg';
-
-
-
+import memebershipAccount from '../screens/membershipAccount';
+import memebershipAccountPayment from '../screens/membershipAccountPayment';
+import upgradeSuccess from '../screens/upgradeSuccess';
 
 const { width, height } = Dimensions.get('window')
 
@@ -278,58 +278,6 @@ const TabNavigator = createBottomTabNavigator(
     }
 );
 
-// const TabNavigator = createBottomTabNavigator(
-//     {
-//         Home: { screen: home },
-//         Shopping: { screen: productList },
-//         Appoinment: { screen: store },
-//         Store: { screen: store },
-//         Doctor: { screen: doctorsList },
-//     },
-//     {
-//         defaultNavigationOptions: ({ navigation }) => ({
-//             tabBarIcon: ({ focused, horizontal, tintColor }) => {
-//                 const { routeName } = navigation.state;
-//                 let IconComponent = Ionicons;
-//                 let iconName;
-//                 if (routeName === 'Home') {
-//                     iconName = `ios-home${focused ? '-sharp' : '-outline'}`;
-//                 } else if (routeName === 'Shopping') {
-//                     iconName = `md-basket${focused ? '-sharp' : '-outline'}`;
-//                 }
-//                 else if (routeName === 'Appoinment') {
-//                     iconName = `calendar${focused ? '-sharp' : '-outline'}`;
-//                 }
-//                 else if (routeName === 'Store') {
-//                     iconName = `location${focused ? '' : '-outline'}`;
-//                 }
-//                 else if (routeName === 'Doctor') {
-//                     iconName = `ios-medkit${focused ? '-sharp' : '-outline'}`;
-//                 }
-//                 //return <IconComponent name={iconName} size={30} color={tintColor} />;
-//                 return <View style={{ margin: 20, width: width * 0.1, height: width * 0.1, borderWidth: 1, borderColor: '#FDC500', borderRadius: width * .05, alignItems: 'center', justifyContent: 'center' }}>
-//                     <IconComponent name={iconName} size={25} color={tintColor} />
-//                 </View>
-//             },
-//         }),
-//         tabBarOptions: {
-//             activeTintColor: '#FDC500',
-//             inactiveTintColor: 'rgba(255,255,255,0.7)',
-//             showLabel: false,
-//             style: {
-//                 // backgroundColor: 'rgba(0,0,0,0.7)',
-//                 borderTopLeftRadius: 20,
-//                 borderTopRightRadius: 20,
-//                 padding: 10,
-//                 height: height * 0.09,
-//                 position: 'absolute',
-//                 backgroundColor: '#343434', justifyContent: 'center', alignItems: 'center'
-//             },
-//         },
-
-//     }
-// );
-
 const MyDrawerNavigator = createDrawerNavigator({
     Home: {
         screen: TabNavigator,
@@ -440,6 +388,9 @@ const MainNavigator = createStackNavigator({
     DoctorsList: { screen: doctorsList },
     DoctorDetails: { screen: doctorDetails },
     UserReg: { screen: userReg },
+    MemebershipAccount: { screen: memebershipAccount },
+    MemebershipAccountPayment: { screen: memebershipAccountPayment },
+    UpgradeSuccess: { screen: upgradeSuccess }
 },
     { headerMode: 'none' }
 );

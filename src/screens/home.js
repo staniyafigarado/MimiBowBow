@@ -7,7 +7,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 import SearchableDropdown from 'react-native-searchable-dropdown';
 import styles from '../styles/styles';
 import WooCommerce from '../utils/wooApi';
-const { width, height } = Dimensions.get('window')
+const { width, height } = Dimensions.get('window');
 const DataArray = require("../screens/categoryData.json");
 const labrador = require('../assets/images/labrador.png');
 const kitty = require('../assets/images/kitty.png');
@@ -180,7 +180,7 @@ export default class App extends React.Component {
 						<View style={{ flexDirection: 'row', alignItems: 'center', height: height * .08, backgroundColor: '#343434', padding: width * .05 }}>
 							<Icon name='wallet-membership' size={25} type='material-community' color='white' />
 							<Text style={{ fontFamily: 'Montserrat-Medium', color: 'white', fontSize: 17, marginLeft: width * .03 }}>Membership Account </Text>
-							<TouchableOpacity onPress={() => this.props.navigation.navigate('Store')}>
+							<TouchableOpacity onPress={() => this.props.navigation.navigate('MemebershipAccount')}>
 								<Text style={{ fontFamily: 'Montserrat-Medium', color: '#FDC500', fontSize: 15, marginLeft: width * .15 }}>Join Now</Text>
 							</TouchableOpacity>
 						</View>

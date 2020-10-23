@@ -116,136 +116,162 @@ export default class App extends React.Component {
             isVisible: false
         });
     }
+
+    _onPress(item) {
+        this.props.navigation.navigate('DoctorAppoinment', {
+            Title: item.title,
+            Image: item.image,
+            Price: item.price,
+            Specialization: item.specialization
+        });
+    }
+
     render() {
-        if (this.state.isLoading) {
-            return (
-                <View style={{ flex: 1, backgroundColor: '#f5c711' }}>
-                    <PacmanIndicator
-                        count={5}
-                        color='black'
-                        animationDuration={600}
-                        size={100}
+        // if (this.state.isLoading) {
+        //     return (
+        //         <View style={{ flex: 1, backgroundColor: '#f5c711' }}>
+        //             <PacmanIndicator
+        //                 count={5}
+        //                 color='black'
+        //                 animationDuration={600}
+        //                 size={100}
+        //             />
+        //         </View>
+        //     );
+        // }
+        return (
+            <View style={{ flex: 1, backgroundColor: '#f5c711' }}>
+                <View style={{ flexDirection: 'row', height: height * .1, alignItems: 'center', justifyContent: 'space-between', margin: width * .05 }}>
+                    <TouchableOpacity
+                    //onPress={() => { this.props.navigation.toggleDrawer(); }}
+                    >
+                        <Icon name='menu' size={40} type='material-icons' color='#343434' />
+                    </TouchableOpacity>
+                    <Image
+                        source={require('../assets/images/logo.png')}
+                        style={{ width: height * .07, height: height * .07 }}
                     />
-                </View>
-            );
-        }
-        else {
-            return (
-                <View style={{ flex: 1, backgroundColor: '#f5c711' }}>
-                    <View style={{ flexDirection: 'row', height: height * .1, alignItems: 'center', justifyContent: 'space-between', margin: width * .05 }}>
-                        <TouchableOpacity
-                        //onPress={() => { this.props.navigation.toggleDrawer(); }}
-                        >
-                            <Icon name='menu' size={40} type='material-icons' color='#343434' />
-                        </TouchableOpacity>
-                        <Image
-                            source={require('../assets/images/logo.png')}
-                            style={{ width: height * .07, height: height * .07 }}
-                        />
-                        <Text style={{ fontFamily: 'Montserrat-Regular', fontSize: 17 }}>
-                            Mimi and Bow Bow
+                    <Text style={{ fontFamily: 'Montserrat-Regular', fontSize: 17 }}>
+                        Mimi and Bow Bow
 					</Text>
-                        <TouchableOpacity onPress={() => this.props.navigation.navigate('CartPage')}>
-                            <Icon name='cart' size={40} type='material-community' color='#343434' />
-                        </TouchableOpacity>
+                    <TouchableOpacity onPress={() => this.props.navigation.navigate('CartPage')}>
+                        <Icon name='cart' size={40} type='material-community' color='#343434' />
+                    </TouchableOpacity>
+                </View>
+                <View style={{ flexDirection: 'row', marginLeft: width * .05, alignItems: 'center' }}>
+                    <View>
+                        {/* <Text style={[styles.TitleText, { color: 'rgba(255,255,255,1)', width: width * .7 }]}>{this.state.productData.name}</Text> */}
+                        <Text style={[styles.TitleText, { color: 'rgba(255,255,255,1)', width: width * .7 }]}>{this.props.navigation.state.params.Title}</Text>
+                        <Text style={{ fontFamily: 'Montserrat-Medium', fontSize: 12, color: 'rgba(255,255,255,1)' }}>{this.props.navigation.state.params.Specialization}</Text>
                     </View>
-                    <View style={{ flexDirection: 'row', marginLeft: width * .05, alignItems: 'center' }}>
-                        <View>
-                            <Text style={[styles.TitleText, { color: 'rgba(255,255,255,1)', width: width * .7 }]}>{this.state.productData.name}</Text>
-                            <Text style={{ fontFamily: 'Montserrat-Medium', fontSize: 12, color: 'rgba(255,255,255,1)' }}>Lorem ipsum dolor sit amet, consetetur sadipscing</Text>
-                        </View>
-                        <Icon name='share-variant' size={25} type='material-community' color='rgba(255,255,255,1)' margin={20} />
-                    </View>
-                    <ScrollView>
-                        <View style={{ borderRadius: 5, width: width * .9, margin: width * .05, height: height * .8 }}>
-                            <Image
+                    <Icon name='share-variant' size={25} type='material-community' color='rgba(255,255,255,1)' margin={20} />
+                </View>
+                <ScrollView>
+                    <View style={{ borderRadius: 5, width: width * .9, margin: width * .05, height: height * .8, marginBottom: height * 0.1 }}>
+                        {/* <Image
                                 source={{ uri: this.state.productData.images[0] ? this.state.productData.images[0].src : "https://www.aiimsnagpur.edu.in/sites/default/files/inline-images/no-image-icon_27.png" }}
                                 style={{ width: width * .9, height: height * .35, borderRadius: 2, resizeMode: 'stretch' }}
-                            />
-                            <View style={{ backgroundColor: 'rgba(255,255,255,1)', padding: width * .05 }}>
-                                <Text style={{ fontSize: 23, fontFamily: 'Montserrat-Medium' }}>Price : ₹{this.state.productData.price}‎ </Text>
-                                <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                                    <Rating
-                                        type='custom'
-                                        ratingColor='#f5c711'
-                                        ratingBackgroundColor='white'
-                                        ratingCount={5}
-                                        imageSize={20}
-                                        style={{ paddingVertical: 10 }}
-                                    />
-                                    <Text style={{ fontFamily: 'Montserrat-Regular', fontSize: 12 }}>4/5 rating</Text>
-                                    <Text style={{ fontFamily: 'Montserrat-Regular', fontSize: 12 }}>(673 reviews)</Text>
-                                </View>
-                                <Text style={{ fontFamily: 'Montserrat-Regular', color: 'rgba(0,0,0,1)' }}>Description</Text>
-                                <Text style={{ fontFamily: 'Montserrat-Regular', fontSize: 11, color: 'rgba(0,0,0,.7)' }} numberOfLines={2}>{this.state.productData.description}</Text>
-                                <View style={{ alignItems: 'center' }}>
-                                    <View style={styles.textInput}>
-                                        <DatePicker
-                                            style={{ width: width * .55, marginLeft: width * .07 }}
-                                            date={this.state.date} //initial date from state
-                                            mode="date" //The enum of date, datetime and time
-                                            placeholder="select date"
-                                            format="DD-MM-YYYY"
-                                            minDate={this.state.date}
-                                            maxDate="01-01-2100"
-                                            confirmBtnText="Confirm"
-                                            cancelBtnText="Cancel"
-                                            customStyles={{
-                                                dateIcon: {
-                                                    position: 'absolute',
-                                                    left: 0,
-                                                    top: 4,
-                                                    marginLeft: 0
-                                                },
-                                                dateInput: {
-                                                    marginLeft: 36,
-                                                    borderWidth: 0
-                                                }
-                                            }}
-                                            //onDateChange={(date) => {this.duedateChange(date)}}
-
-                                            onDateChange={(date) => { this.setState({ date: date }) }}
-                                        />
-                                    </View>
-                                </View>
-                                {this.state.btnValue === 1 ?
-                                    <TouchableOpacity onPress={() => this.addToCart(this.state.productData, this.state.date)} style={{ width: width * .8, alignItems: 'center', justifyContent: 'center', backgroundColor: '#343434', height: height * 0.08, borderRadius: 3 }}>
-                                        <Text style={[styles.TextiputHeader, { color: 'rgba(255,255,255,1)' }]}>BOOK NOW</Text>
-                                    </TouchableOpacity>
-                                    :
-                                    <TouchableOpacity onPress={() => this.props.navigation.navigate('CartPage')} style={{ width: width * .8, alignItems: 'center', justifyContent: 'center', backgroundColor: '#343434', height: height * 0.08, borderRadius: 3 }}>
-                                        <Text style={[styles.TextiputHeader, { color: 'rgba(255,255,255,1)' }]}>GO TO CHECKOUT</Text>
-                                    </TouchableOpacity>
-                                }
-
+                            /> */}
+                        <Image
+                            source={{ uri: this.props.navigation.state.params.Image }}
+                            style={{ width: width * .9, height: height * .35, borderRadius: 2, resizeMode: 'stretch' }}
+                        />
+                        <View style={{ backgroundColor: 'rgba(255,255,255,1)', padding: width * .05 }}>
+                            {/* <Text style={{ fontSize: 23, fontFamily: 'Montserrat-Medium' }}>Price : ₹{this.state.productData.price}‎ </Text> */}
+                            <Text style={{ fontSize: 23, fontFamily: 'Montserrat-Medium' }}>Price : ₹{this.props.navigation.state.params.Price} </Text>
+                            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                                <Rating
+                                    type='custom'
+                                    ratingColor='#f5c711'
+                                    ratingBackgroundColor='white'
+                                    ratingCount={5}
+                                    imageSize={20}
+                                    style={{ paddingVertical: 10 }}
+                                />
+                                <Text style={{ fontFamily: 'Montserrat-Regular', fontSize: 12 }}>4/5 rating</Text>
+                                <Text style={{ fontFamily: 'Montserrat-Regular', fontSize: 12 }}>(673 reviews)</Text>
                             </View>
+                            <Text style={{ fontFamily: 'Montserrat-Regular', color: 'rgba(0,0,0,1)' }}>Description</Text>
+                            {/* <Text style={{ fontFamily: 'Montserrat-Regular', fontSize: 11, color: 'rgba(0,0,0,.7)' }} numberOfLines={2}>{this.state.productData.description}</Text> */}
+                            <Text style={{ fontFamily: 'Montserrat-Regular', fontSize: 11, color: 'rgba(0,0,0,.7)', textAlign: 'justify' }}>Lorem ipsum dolor sit amet,
+                            consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+                            quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                            Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+                            Excepteur sint occaecat cupidatat non proident,
+                             sunt in culpa qui officia deserunt mollit anim id est laborum.</Text>
+                            {/* <View style={{ alignItems: 'center' }}>
+                                <View style={styles.textInput}>
+                                    <DatePicker
+                                        style={{ width: width * .55, marginLeft: width * .07 }}
+                                        date={this.state.date} //initial date from state
+                                        mode="date" //The enum of date, datetime and time
+                                        placeholder="select date"
+                                        format="DD-MM-YYYY"
+                                        minDate={this.state.date}
+                                        maxDate="01-01-2100"
+                                        confirmBtnText="Confirm"
+                                        cancelBtnText="Cancel"
+                                        customStyles={{
+                                            dateIcon: {
+                                                position: 'absolute',
+                                                left: 0,
+                                                top: 4,
+                                                marginLeft: 0
+                                            },
+                                            dateInput: {
+                                                marginLeft: 36,
+                                                borderWidth: 0
+                                            }
+                                        }}
+                                        //onDateChange={(date) => {this.duedateChange(date)}}
+
+                                        onDateChange={(date) => { this.setState({ date: date }) }}
+                                    />
+                                </View>
+                            </View> */}
+                            <TouchableOpacity
+                                // onPress={() => this.addToCart(this.state.productData, this.state.date)} 
+                                onPress={() => this.props.navigation.navigate('DoctorAppoinment')}
+                                style={{ width: width * .8, alignItems: 'center', justifyContent: 'center', backgroundColor: '#343434', height: height * 0.08, borderRadius: 3 }}>
+                                <Text style={[styles.TextiputHeader, { color: 'rgba(255,255,255,1)' }]}>BOOK NOW</Text>
+                            </TouchableOpacity>
+                            {/* {this.state.btnValue === 1 ?
+                                <TouchableOpacity onPress={() => this.addToCart(this.state.productData, this.state.date)} style={{ width: width * .8, alignItems: 'center', justifyContent: 'center', backgroundColor: '#343434', height: height * 0.08, borderRadius: 3 }}>
+                                    <Text style={[styles.TextiputHeader, { color: 'rgba(255,255,255,1)' }]}>BOOK NOW</Text>
+                                </TouchableOpacity>
+                                :
+                                <TouchableOpacity onPress={() => this.props.navigation.navigate('CartPage')} style={{ width: width * .8, alignItems: 'center', justifyContent: 'center', backgroundColor: '#343434', height: height * 0.08, borderRadius: 3 }}>
+                                    <Text style={[styles.TextiputHeader, { color: 'rgba(255,255,255,1)' }]}>GO TO CHECKOUT</Text>
+                                </TouchableOpacity>
+                            } */}
 
                         </View>
-                    </ScrollView>
-                    <View style={{ justifyContent: 'center' }}>
-                        <Modal
-                            animationType={"fade"}
-                            transparent={true}
-                            visible={this.state.isVisible}
-                            onRequestClose={() => { console.log("Modal has been closed.") }}>
-                            <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.8)' }}>
-                                <ImageBackground source={require('../assets/images/Alert1.png')} style={{
-                                    width: width * 1, height: width * 1, justifyContent
-                                        : 'flex-end', alignItems: 'center', marginTop: height * .25
-                                }} >
-                                    {/* <TouchableOpacity onPress = {() => {this.setState({ isVisible:!this.state.isVisible})}} style={[styles.textInputLogin,{alignItems:'center',backgroundColor:'#343434', borderWidth:0}]}>
+
+                    </View>
+                </ScrollView>
+                <View style={{ justifyContent: 'center' }}>
+                    <Modal
+                        animationType={"fade"}
+                        transparent={true}
+                        visible={this.state.isVisible}
+                        onRequestClose={() => { console.log("Modal has been closed.") }}>
+                        <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.8)' }}>
+                            <ImageBackground source={require('../assets/images/Alert1.png')} style={{
+                                width: width * 1, height: width * 1, justifyContent
+                                    : 'flex-end', alignItems: 'center', marginTop: height * .25
+                            }} >
+                                {/* <TouchableOpacity onPress = {() => {this.setState({ isVisible:!this.state.isVisible})}} style={[styles.textInputLogin,{alignItems:'center',backgroundColor:'#343434', borderWidth:0}]}>
                         <Text style={[styles.TextiputHeader,{color:'rgba(255,255,255,1)'}]} >CLOSE</Text>
                     </TouchableOpacity> */}
-                                    <Button style={[styles.textInputLogin, { alignItems: 'center', backgroundColor: '#343434', borderWidth: 0 }]} title="CLOSE" onPress={() => { this.setState({ isVisible: !this.state.isVisible }) }} />
-                                </ImageBackground>
-                            </View>
-                        </Modal>
-                    </View>
-
-
-
+                                <Button style={[styles.textInputLogin, { alignItems: 'center', backgroundColor: '#343434', borderWidth: 0 }]} title="CLOSE" onPress={() => { this.setState({ isVisible: !this.state.isVisible }) }} />
+                            </ImageBackground>
+                        </View>
+                    </Modal>
                 </View>
-            );
-        }
+
+
+
+            </View>
+        );
     }
 }

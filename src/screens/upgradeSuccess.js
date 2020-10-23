@@ -58,25 +58,24 @@ export default class App extends React.Component {
                     />
                     <Text style={{ fontFamily: 'Montserrat-Regular', fontSize: 17 }}>
                         Mimi and Bow Bow
-                </Text>
+					</Text>
                     <TouchableOpacity onPress={() => this.props.navigation.navigate('CartPage')}>
 
                         <Icon name='cart' size={40} type='material-community' color='#343434' />
                         {/* {this.state.cartCount != 0 ?
-                        <Badge value={this.state.cartCount} status="error" containerStyle={{ position: 'absolute', top: -1, right: -1 }} />
-                        : null
-                    } */}
+                            <Badge value={this.state.cartCount} status="error" containerStyle={{ position: 'absolute', top: -1, right: -1 }} />
+                            : null
+                        } */}
 
                     </TouchableOpacity>
                 </View>
                 <View style={{ height: height * .09, marginLeft: width * .05, marginRight: width * .05 }}>
-                    <Text style={[styles.TitleText, { color: '#343434', fontSize: 20, textAlign: 'center' }]}>Order Placed Successfully</Text>
+                    <Text style={[styles.TitleText, { color: '#343434', fontSize: 20, textAlign: 'center' }]}>Upgraded Successfully</Text>
                 </View>
                 <View style={{ alignItems: 'center' }}>
                     <Image source={success} style={{ width: width * 1, height: height * 0.5 }}></Image>
                     <View style={{ alignItems: 'center', paddingBottom: height * .025 }}>
                         <TouchableOpacity
-                            // onPress={() => { this.goToHome() }}
                             onPress={() => this.props.navigation.navigate('Home')}
                             style={{ width: width * .9, marginTop: width * .2, alignItems: 'center', justifyContent: 'center', backgroundColor: '#343434', height: height * 0.08, borderRadius: 3 }}>
                             <Text style={[styles.TextiputHeader, { color: 'rgba(255,255,255,1)' }]}>GO TO HOMESCREEN</Text>

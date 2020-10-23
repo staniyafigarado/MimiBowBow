@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text, View, Dimensions, Image, TextInput, Picker } from 'react-native';
+import { Text, View, Dimensions, Image, TextInput } from 'react-native';
 import SearchBar from 'react-native-search-bar';
 import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
 import { Icon } from 'react-native-elements';
