@@ -112,7 +112,7 @@ export default class App extends React.Component {
                         </View>
                     </TouchableOpacity>
                 </View>
-                <View style={{ height: height * .6, backgroundColor: '#fff', borderTopStartRadius: 40, borderTopEndRadius: 40, padding: height * .05, justifyContent: 'space-evenly' }}>
+                <View style={{ height: height * .6, backgroundColor: '#fff', borderTopStartRadius: 40, borderTopEndRadius: 40, padding: height * .05, justifyContent: 'space-evenly', paddingBottom: height * 0.12 }}>
                     <TouchableOpacity onPress={() => this.props.navigation.navigate('MyProfile')} style={{ flexDirection: 'row', paddingLeft: width * .05, paddingBottom: height * .05 }}>
                         <Icon name='user-circle' size={20} type='font-awesome-5' color='rgba(0,0,0,1)' />
                         <Text style={{ fontFamily: 'Montserrat-SemiBold', fontSize: 15, paddingLeft: 20 }}>

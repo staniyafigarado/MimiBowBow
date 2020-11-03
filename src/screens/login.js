@@ -6,9 +6,8 @@ import { StackActions, NavigationActions } from 'react-navigation';
 import styles from '../styles/styles';
 import AsyncStorage from '@react-native-community/async-storage';
 import WooCommerce from '../utils/wooApi';
-
-
 const { width, height } = Dimensions.get('window')
+
 
 export default class App extends React.Component {
     constructor(props) {
@@ -19,34 +18,36 @@ export default class App extends React.Component {
         };
     }
     state = {
-        nameList: []
+        nameList: [],
+        pushData: [],
+        loggedIn: false
     }
     userLogin = () => {
 
-        // const reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
-        // if(this.state.emailId != '' || reg.test(this.state.emailId) === true){
-        //     const {emailId} = this.state;
-        //     const {password} = this.state;
-        //     var FormData = require('form-data');
-        //     var data = new FormData();
-        //     data.append('username', 'sreejith7482@gmail.com');
-        //     data.append('password', 'orgRfIzWHCP1');
+        const reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+        if (this.state.emailId != '' || reg.test(this.state.emailId) === true) {
+            const { emailId } = this.state;
+            const { password } = this.state;
+            var FormData = require('form-data');
+            var data = new FormData();
+            data.append('username', 'sreejith7482@gmail.com');
+            data.append('password', 'orgRfIzWHCP1');
 
-        //     fetch('https://mimiandbowbow.com/test/api/auth/generate_auth_cookie/?username=sreejith7482@gmail.com&password=orgRfIzWHCP1', {
-        //         method: 'GET',
+            fetch('https://mimiandbowbow.com/test/api/auth/generate_auth_cookie/?username=sreejith7482@gmail.com&password=orgRfIzWHCP1', {
+                method: 'GET',
 
-        //       }).then((response) => response.json())
-        //       .then((responseJson) => {
-        //          console.log(responseJson);
+            }).then((response) => response.json())
+                .then((responseJson) => {
+                    console.log(responseJson);
 
-        //       })
-        //       .catch((error) => {
-        //          console.error(error);
-        //       });
-        // }
-        // else{
-        //     Alert.alert("Alert", "Please enter a valid mail ID");
-        // }
+                })
+                .catch((error) => {
+                    console.error(error);
+                });
+        }
+        else {
+            Alert.alert("Alert", "Please enter a valid mail ID");
+        }
     }
     gotoHome = async (response) => {
         try {
@@ -66,7 +67,9 @@ export default class App extends React.Component {
             console.log(error)
         }
     }
+
     render() {
+        const { navigate } = this.props.navigation;
         return (
             <ImageBackground source={require('../assets/images/SignUpBkGrnd.png')} style={{ width: '100%', height: '100%', resizeMode: 'stretch' }}>
                 <View style={{ height: height * .4, marginLeft: width * .05, paddingTop: height * .1 }}>
@@ -104,14 +107,21 @@ export default class App extends React.Component {
                     </TouchableOpacity>
 
                 </View>
-                <View style={{ justifyContent: 'center', flexDirection: 'row' }}>
-                    <View style={{ margin: 20, width: width * 0.15, height: width * 0.15, borderWidth: 1, borderColor: '#343434', borderRadius: width * .075, alignItems: 'center', justifyContent: 'center' }}>
-                        <Icon name='facebook' size={30} type='fontisto' color='#343434' />
-                    </View>
+                {/* <View style={{ justifyContent: 'center', flexDirection: 'row' }}>
+                    <TouchableOpacity
+                        onPress={() => {
+                            this.loginWithFacebook(navigate);
+                            // this.props.navigation.navigate('Home')
+                        }}
+                        style={{ margin: 20, width: width * 0.15, height: width * 0.15, borderWidth: 1, borderColor: '#343434', borderRadius: width * .075, alignItems: 'center', justifyContent: 'center' }}>
+                        <Icon name='facebook' size={30} type='fontisto' color='#343434'
+                        // onPress={() => loginWithFacebook()} 
+                        />
+                    </TouchableOpacity>
                     <View style={{ margin: 20, width: width * 0.15, height: width * 0.15, borderWidth: 1, borderColor: '#343434', borderRadius: width * .075, alignItems: 'center', justifyContent: 'center' }}>
                         <Icon name='google-plus' size={40} type='material-community' color='#343434' />
                     </View>
-                </View>
+                </View> */}
             </ImageBackground>
         );
     }

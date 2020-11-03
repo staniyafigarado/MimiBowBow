@@ -189,23 +189,23 @@ export default class App extends React.Component {
     }
     render() {
         const { navigate } = this.props.navigation;
-        // if (this.state.isLoading) {
-        //     return (
-        //         <View style={{ flex: 1, backgroundColor: '#f5c711' }}>
-        //             <PacmanIndicator
-        //                 count={5}
-        //                 color='black'
-        //                 animationDuration={600}
-        //                 size={100}
-        //             />
-        //         </View>
-        //     );
-        // }
+        if (this.state.isLoading) {
+            return (
+                <View style={{ flex: 1, backgroundColor: '#f5c711' }}>
+                    <PacmanIndicator
+                        count={5}
+                        color='black'
+                        animationDuration={600}
+                        size={100}
+                    />
+                </View>
+            );
+        }
         return (
             <View style={{ flex: 1, backgroundColor: '#f5c711' }}>
                 <View style={{ flexDirection: 'row', height: height * .1, alignItems: 'center', justifyContent: 'space-between', margin: width * .05 }}>
                     <TouchableOpacity
-                    //onPress={() => { this.props.navigation.toggleDrawer(); }}
+                        onPress={() => { this.props.navigation.toggleDrawer(); }}
                     >
                         <Icon name='menu' size={40} type='material-icons' color='#343434' />
                     </TouchableOpacity>
@@ -222,7 +222,7 @@ export default class App extends React.Component {
                     <Text style={[styles.TitleText, { fontFamily: 'Montserrat-SemiBold', fontSize: 20 }]}>My Cart</Text>
 
                 </View>
-                <ScrollView>
+                <ScrollView showsVerticalScrollIndicator={false} style={{ marginBottom: height * .1 }}>
                     <FlatList
                         keyExtractor={(item, index) => index}
                         data={this.state.productData}

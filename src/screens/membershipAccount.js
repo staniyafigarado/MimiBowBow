@@ -9,24 +9,16 @@ const icon3 = require('../assets/icons/upgrade3.png');
 const data = [
     {
         id: '1',
-        title: 'Membership plan 1',
-        image: icon1,
+        title: 'Customer Prime Membership',
+        subTitle: 'For 1 Year',
         price: 1000,
-        level: 1
     },
     {
         id: '2',
-        title: 'Membership plan 2',
-        image: icon2,
+        title: 'Wholesale Customer Prime Membership',
+        subTitle: 'For 1 Year',
         price: 2000,
-        level: 2
-    },
-    {
-        id: '3',
-        title: 'Membership plan 3',
-        image: icon3,
-        price: 3000,
-        level: 3
+
     },
 ];
 export default class JustifyContentBasics extends Component {
@@ -40,7 +32,7 @@ export default class JustifyContentBasics extends Component {
         return (
             <View style={{ flex: 1, backgroundColor: '#f5c711' }}>
                 <StatusBar barStyle="dark-content" hidden={true} backgroundColor="rgba(255,255,255,1)" translucent={true} />
-                <View style={{ flexDirection: 'row', height: height * .1, alignItems: 'center', justifyContent: 'space-between', margin: width * .05 }}>
+                <View style={{ flexDirection: 'row', height: height * .08, alignItems: 'center', justifyContent: 'space-between', margin: width * .05 }}>
                     <TouchableOpacity onPress={() => { this.props.navigation.toggleDrawer(); }}>
                         <Icon name='menu' size={40} type='material-icons' color='#343434' />
                     </TouchableOpacity>
@@ -61,7 +53,7 @@ export default class JustifyContentBasics extends Component {
 
                     </TouchableOpacity>
                 </View>
-                <View style={{ height: height * .06, marginLeft: width * .05, marginRight: width * .05 }}>
+                <View style={{ height: height * .04, marginLeft: width * .05, marginRight: width * .05 }}>
                     <Text style={[styles.TitleText, { color: '#343434', fontSize: 20 }]}>Membership Upgrade</Text>
                 </View>
                 <View>
@@ -69,26 +61,20 @@ export default class JustifyContentBasics extends Component {
                         data={data}
                         renderItem={({ item }) => (
                             <View style={{
-                                borderColor: '#FFFFFF', borderRadius: 10, borderWidth: 6, height: height * 0.23,
+                                borderColor: '#FFFFFF', borderRadius: 10, borderWidth: 6, height: height * 0.22,
                                 marginHorizontal: width * 0.05, flexDirection: 'column', marginTop: height * 0.02
                             }}>
                                 <View style={{ height: '100%', flexDirection: 'row', padding: height * 0.02 }}>
-                                    <View style={{ flexDirection: 'column', width: '85%', justifyContent: 'space-evenly' }}>
+                                    <View style={{ flexDirection: 'column', width: '100%', justifyContent: 'space-evenly' }}>
                                         <Text style={{ fontFamily: 'Montserrat-Bold', fontSize: 16, color: '#FFFFFF' }}>{item.title}</Text>
-                                        <Text style={{ fontFamily: 'Montserrat-Medium', fontSize: 14, color: '#FFFFFF' }}>Rs {item.price}</Text>
-                                        <View style={{ backgroundColor: '#FFFFFF', height: height * 0.06, width: width * 0.4, justifyContent: 'center' }}>
+                                        <Text style={{ fontFamily: 'Montserrat-Bold', fontSize: 16, color: '#FFFFFF' }}>{item.subTitle}</Text>
+                                        <Text style={{ fontFamily: 'Montserrat-Medium', fontSize: 22, color: '#343434' }}>Rs {item.price}</Text>
+                                        <View style={{ backgroundColor: '#FFFFFF', height: height * 0.06, width: '100%', justifyContent: 'center', borderRadius: 10 }}>
                                             <TouchableOpacity
                                                 onPress={() => this._onPress(item)}
-                                                style={{ padding: height * 0.02 }}>
-                                                <Text style={{ fontFamily: 'Montserrat-Medium', fontSize: 12, color: '#FDC500', textAlign: 'center' }}>Upgrade Now</Text>
+                                                style={{ padding: height * 0.02, }}>
+                                                <Text style={{ fontFamily: 'Montserrat-SemiBold', fontSize: 16, color: '#FDC500', textAlign: 'center' }}>Pay Now</Text>
                                             </TouchableOpacity>
-                                        </View>
-                                    </View>
-                                    <View style={{ top: height * -0.03, width: '15%', alignItems: 'center' }}>
-                                        <Image source={item.image} style={{ width: 50, height: 50 }}></Image>
-                                        <View style={{ alignItems: 'center', top: height * -0.06 }}>
-                                            <Text style={{ fontFamily: 'Montserrat-Bold', fontSize: 20, color: '#FFFFFF' }}>{item.level}</Text>
-                                            <Text style={{ fontFamily: 'Montserrat-Bold', fontSize: 6, color: '#FFFFFF' }}>Level</Text>
                                         </View>
                                     </View>
                                 </View>

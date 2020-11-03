@@ -127,23 +127,23 @@ export default class App extends React.Component {
     }
 
     render() {
-        // if (this.state.isLoading) {
-        //     return (
-        //         <View style={{ flex: 1, backgroundColor: '#f5c711' }}>
-        //             <PacmanIndicator
-        //                 count={5}
-        //                 color='black'
-        //                 animationDuration={600}
-        //                 size={100}
-        //             />
-        //         </View>
-        //     );
-        // }
+        if (this.state.isLoading) {
+            return (
+                <View style={{ flex: 1, backgroundColor: '#f5c711' }}>
+                    <PacmanIndicator
+                        count={5}
+                        color='black'
+                        animationDuration={600}
+                        size={100}
+                    />
+                </View>
+            );
+        }
         return (
             <View style={{ flex: 1, backgroundColor: '#f5c711' }}>
                 <View style={{ flexDirection: 'row', height: height * .1, alignItems: 'center', justifyContent: 'space-between', margin: width * .05 }}>
                     <TouchableOpacity
-                    //onPress={() => { this.props.navigation.toggleDrawer(); }}
+                        onPress={() => { this.props.navigation.toggleDrawer(); }}
                     >
                         <Icon name='menu' size={40} type='material-icons' color='#343434' />
                     </TouchableOpacity>
@@ -160,25 +160,25 @@ export default class App extends React.Component {
                 </View>
                 <View style={{ flexDirection: 'row', marginLeft: width * .05, alignItems: 'center' }}>
                     <View>
-                        {/* <Text style={[styles.TitleText, { color: 'rgba(255,255,255,1)', width: width * .7 }]}>{this.state.productData.name}</Text> */}
-                        <Text style={[styles.TitleText, { color: 'rgba(255,255,255,1)', width: width * .7 }]}>{this.props.navigation.state.params.Title}</Text>
-                        <Text style={{ fontFamily: 'Montserrat-Medium', fontSize: 12, color: 'rgba(255,255,255,1)' }}>{this.props.navigation.state.params.Specialization}</Text>
+                        <Text style={[styles.TitleText, { color: 'rgba(255,255,255,1)', width: width * .75 }]}>{this.state.productData.name}</Text>
+                        {/* <Text style={[styles.TitleText, { color: 'rgba(255,255,255,1)', width: width * .7 }]}>{this.props.navigation.state.params.Title}</Text>
+                        <Text style={{ fontFamily: 'Montserrat-Medium', fontSize: 12, color: 'rgba(255,255,255,1)' }}>{this.props.navigation.state.params.Specialization}</Text> */}
                     </View>
                     <Icon name='share-variant' size={25} type='material-community' color='rgba(255,255,255,1)' margin={20} />
                 </View>
                 <ScrollView>
                     <View style={{ borderRadius: 5, width: width * .9, margin: width * .05, height: height * .8, marginBottom: height * 0.1 }}>
-                        {/* <Image
-                                source={{ uri: this.state.productData.images[0] ? this.state.productData.images[0].src : "https://www.aiimsnagpur.edu.in/sites/default/files/inline-images/no-image-icon_27.png" }}
-                                style={{ width: width * .9, height: height * .35, borderRadius: 2, resizeMode: 'stretch' }}
-                            /> */}
                         <Image
-                            source={{ uri: this.props.navigation.state.params.Image }}
+                            source={{ uri: this.state.productData.images[0] ? this.state.productData.images[0].src : "https://www.aiimsnagpur.edu.in/sites/default/files/inline-images/no-image-icon_27.png" }}
                             style={{ width: width * .9, height: height * .35, borderRadius: 2, resizeMode: 'stretch' }}
                         />
+                        {/* <Image
+                            source={{ uri: this.props.navigation.state.params.Image }}
+                            style={{ width: width * .9, height: height * .35, borderRadius: 2, resizeMode: 'stretch' }}
+                        /> */}
                         <View style={{ backgroundColor: 'rgba(255,255,255,1)', padding: width * .05 }}>
-                            {/* <Text style={{ fontSize: 23, fontFamily: 'Montserrat-Medium' }}>Price : ₹{this.state.productData.price}‎ </Text> */}
-                            <Text style={{ fontSize: 23, fontFamily: 'Montserrat-Medium' }}>Price : ₹{this.props.navigation.state.params.Price} </Text>
+                            <Text style={{ fontSize: 23, fontFamily: 'Montserrat-Medium' }}>Price : ₹{this.state.productData.price}‎ </Text>
+                            {/* <Text style={{ fontSize: 23, fontFamily: 'Montserrat-Medium' }}>Fee : ₹{this.props.navigation.state.params.Price} </Text> */}
                             <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
                                 <Rating
                                     type='custom'
@@ -192,13 +192,8 @@ export default class App extends React.Component {
                                 <Text style={{ fontFamily: 'Montserrat-Regular', fontSize: 12 }}>(673 reviews)</Text>
                             </View>
                             <Text style={{ fontFamily: 'Montserrat-Regular', color: 'rgba(0,0,0,1)' }}>Description</Text>
-                            {/* <Text style={{ fontFamily: 'Montserrat-Regular', fontSize: 11, color: 'rgba(0,0,0,.7)' }} numberOfLines={2}>{this.state.productData.description}</Text> */}
-                            <Text style={{ fontFamily: 'Montserrat-Regular', fontSize: 11, color: 'rgba(0,0,0,.7)', textAlign: 'justify' }}>Lorem ipsum dolor sit amet,
-                            consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-                            quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-                            Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
-                            Excepteur sint occaecat cupidatat non proident,
-                             sunt in culpa qui officia deserunt mollit anim id est laborum.</Text>
+                            <Text style={{ fontFamily: 'Montserrat-Regular', fontSize: 11, color: 'rgba(0,0,0,.7)', textAlign: 'justify', width: '100%' }}>{this.state.productData.description}</Text>
+
                             {/* <View style={{ alignItems: 'center' }}>
                                 <View style={styles.textInput}>
                                     <DatePicker

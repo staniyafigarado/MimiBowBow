@@ -76,23 +76,23 @@ export default class App extends React.Component {
         });
     }
     render() {
-        // if (this.state.isLoading) {
-        //     return (
-        //         <View style={{ flex: 1, backgroundColor: '#f5c711' }}>
-        //             <PacmanIndicator
-        //                 count={5}
-        //                 color='black'
-        //                 animationDuration={600}
-        //                 size={100}
-        //             />
-        //         </View>
-        //     );
-        // }
+        if (this.state.isLoading) {
+            return (
+                <View style={{ flex: 1, backgroundColor: '#f5c711' }}>
+                    <PacmanIndicator
+                        count={5}
+                        color='black'
+                        animationDuration={600}
+                        size={100}
+                    />
+                </View>
+            );
+        }
         return (
             <View style={{ flex: 1, backgroundColor: '#f5c711' }}>
                 <View style={{ flexDirection: 'row', height: height * .1, alignItems: 'center', justifyContent: 'space-between', margin: width * .05 }}>
                     <TouchableOpacity
-                    // onPress={() => { this.props.navigation.toggleDrawer(); }}
+                        onPress={() => { this.props.navigation.toggleDrawer(); }}
                     >
                         <Icon name='menu' size={40} type='material-icons' color='#343434' />
                     </TouchableOpacity>
@@ -192,7 +192,7 @@ export default class App extends React.Component {
                             </View>
                             <View style={{ alignItems: 'center' }}>
                                 <TouchableOpacity
-                                    // onPress={() => { this.upadateUser() }} 
+                                    onPress={() => { this.upadateUser() }}
                                     style={{ width: width * .9, marginTop: width * .05, alignItems: 'center', justifyContent: 'center', backgroundColor: '#343434', height: height * 0.08, borderRadius: 3 }}>
                                     <Text style={[styles.TextiputHeader, { color: 'rgba(255,255,255,1)' }]}>SUBMIT</Text>
                                 </TouchableOpacity>

@@ -99,23 +99,23 @@ export default class App extends React.Component {
         });
     }
     render() {
-        // if (this.state.isLoading) {
-        //     return (
-        //         <View style={{ flex: 1, backgroundColor: '#f5c711' }}>
-        //             <PacmanIndicator
-        //                 count={5}
-        //                 color='black'
-        //                 animationDuration={600}
-        //                 size={100}
-        //             />
-        //         </View>
-        //     );
-        // }
+        if (this.state.isLoading) {
+            return (
+                <View style={{ flex: 1, backgroundColor: '#f5c711' }}>
+                    <PacmanIndicator
+                        count={5}
+                        color='black'
+                        animationDuration={600}
+                        size={100}
+                    />
+                </View>
+            );
+        }
         return (
             <View style={{ flex: 1, backgroundColor: '#f5c711' }}>
                 <View style={{ flexDirection: 'row', height: height * .1, alignItems: 'center', justifyContent: 'space-between', margin: width * .05 }}>
                     <TouchableOpacity
-                    //onPress={() => { this.props.navigation.toggleDrawer(); }}
+                        onPress={() => { this.props.navigation.toggleDrawer(); }}
                     >
                         <Icon name='menu' size={40} type='material-icons' color='#343434' />
                     </TouchableOpacity>

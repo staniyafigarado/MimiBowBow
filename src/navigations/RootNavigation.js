@@ -71,7 +71,8 @@ import userReg from '../screens/userReg';
 import memebershipAccount from '../screens/membershipAccount';
 import memebershipAccountPayment from '../screens/membershipAccountPayment';
 import upgradeSuccess from '../screens/upgradeSuccess';
-
+import biddingList from '../screens/biddingList';
+import biddingDetails from '../screens/biddingDetails';
 const { width, height } = Dimensions.get('window')
 
 const DrawerContent = (props) => (
@@ -90,37 +91,34 @@ const DrawerContent = (props) => (
                 <Image source={require('../assets/images/NameLogo.png')} style={{ width: width * .5, height: height * .1, marginBottom: height * .01, marginTop: height * .01, resizeMode: 'stretch' }} />
             </View>
         </View>
-        <View style={{ height: '55%' }}>
+        <View style={{ height: '65%' }}>
             <ScrollView>
                 <DrawerItems {...props} />
             </ScrollView>
 
         </View>
 
-        <View style={{ height: '25%' }}>
+        <View style={{ height: '15%', flexDirection: 'column-reverse' }}>
+            <View style={{ backgroundColor: 'rgba(0,0,0,0.7)', alignItems: 'center', justifyContent: 'center', height: height * 0.03 }}>
+                <Text style={{ fontSize: 15, fontFamily: 'Montserrat-Medium', color: 'rgba(255,255,255,0.3)', marginLeft: width * 0.05 }}>MIMIANDBOWBOW</Text>
+            </View>
             <View style={{ borderTopWidth: 1, borderTopColor: 'rgba(0,0,0,0.5)', height: '85%' }}>
-                <Text style={{ fontSize: 20, fontFamily: 'Montserrat-Regular', color: 'black', marginLeft: width * 0.05, paddingTop: 5, height: '22%' }}>Contact With Us</Text>
-                <View style={{ justifyContent: 'center', flexDirection: 'row', height: '50%' }}>
+                <Text style={{ fontSize: 20, fontFamily: 'Montserrat-Regular', color: 'black', marginLeft: width * 0.05, paddingTop: 5, height: '30%' }}>Contact With Us</Text>
+                <View style={{ justifyContent: 'center', flexDirection: 'row', height: '70%', alignItems: 'center' }}>
                     <View style={{ margin: 20, width: width * 0.1, height: width * 0.1, borderWidth: 1, borderColor: '#FDC500', borderRadius: width * .05, alignItems: 'center', justifyContent: 'center' }}>
-                        <Icon name='facebook' size={25} type='fontisto' color='#FDC500' />
+                        <Icon name='facebook' size={20} type='fontisto' color='#FDC500' />
                     </View>
                     <View style={{ margin: 20, width: width * 0.1, height: width * 0.1, borderWidth: 1, borderColor: '#FDC500', borderRadius: width * .05, alignItems: 'center', justifyContent: 'center' }}>
-                        <Icon name='google' size={25} type='fontisto' color='#FDC500' />
+                        <Icon name='google' size={20} type='fontisto' color='#FDC500' />
                     </View>
                     <View style={{ margin: 20, width: width * 0.1, height: width * 0.1, borderWidth: 1, borderColor: '#FDC500', borderRadius: width * .05, alignItems: 'center', justifyContent: 'center' }}>
-                        <Icon name='instagram' size={25} type='fontisto' color='#FDC500' />
-                    </View>
-                    <View style={{ margin: 20, width: width * 0.1, height: width * 0.1, borderWidth: 1, borderColor: '#FDC500', borderRadius: width * .05, alignItems: 'center', justifyContent: 'center' }}>
-                        <Icon name='instagram' size={25} type='fontisto' color='#FDC500' />
+                        <Icon name='instagram' size={20} type='fontisto' color='#FDC500' />
                     </View>
                 </View>
-                <TouchableOpacity onPress={() => { props.navigation.navigate('LogOut') }} style={{ flexDirection: 'row', marginLeft: width * 0.05, height: '28%' }}>
+                {/* <TouchableOpacity onPress={() => { props.navigation.navigate('LogOut') }} style={{ flexDirection: 'row', marginLeft: width * 0.05, height: '28%' }}>
                     <Icon name='logout' size={30} type='material-community' color='rgba(0,0,0,1)' />
                     <Text style={{ fontSize: 20, fontFamily: 'Montserrat-Medium', color: 'black', marginLeft: width * 0.05 }}>Logout</Text>
-                </TouchableOpacity>
-            </View>
-            <View style={{ backgroundColor: 'rgba(0,0,0,0.7)', height: '15%', alignItems: 'center', justifyContent: 'center' }}>
-                <Text style={{ fontSize: 15, fontFamily: 'Montserrat-Medium', color: 'rgba(255,255,255,0.3)', marginLeft: width * 0.05 }}>MIMIANDBOWBOW</Text>
+                </TouchableOpacity> */}
             </View>
         </View>
     </View>
@@ -196,6 +194,36 @@ class App extends React.Component {
     }
 };
 
+
+
+const StackNav = createStackNavigator({
+    Home: { screen: home },
+    Categories: { screen: categories },
+    PetDetails: { screen: petDetails },
+    ItemList: { screen: itemList },
+    DoctorAppoinment: { screen: doctorAppoinment },
+    BookingConfirm: { screen: bookingConfirm },
+    Store: { screen: store },
+    ProductList: { screen: productList },
+    CartPage: { screen: cartPage },
+    MyAccount: { screen: myAccount },
+    MyProfile: { screen: myProfile },
+    OrderListing: { screen: orderListing },
+    BillingAddress: { screen: billingAddress },
+    CartBillingAddress: { screen: cartBillingAddress },
+    OrderDetails: { screen: orderDetails },
+    ProductReview: { screen: productReview },
+    PaymentDetails: { screen: paymentDetails },
+    DoctorsList: { screen: doctorsList },
+    DoctorDetails: { screen: doctorDetails },
+    MemebershipAccount: { screen: memebershipAccount },
+    MemebershipAccountPayment: { screen: memebershipAccountPayment },
+    BiddingList: { screen: biddingList },
+    BiddingDetails: { screen: biddingDetails }
+},
+    { headerMode: 'none' }
+);
+
 const TabNavigator = createBottomTabNavigator(
     {
 
@@ -222,7 +250,7 @@ const TabNavigator = createBottomTabNavigator(
             },
         },
         Home: {
-            screen: home,
+            screen: StackNav,
             navigationOptions: {
                 tabBarLabel: 'Home',
                 // tabBarIcon:
@@ -256,6 +284,8 @@ const TabNavigator = createBottomTabNavigator(
                 )
             },
         },
+
+
     },
 
     {
@@ -290,21 +320,21 @@ const MyDrawerNavigator = createDrawerNavigator({
             )
         },
     },
-    Media: {
-        screen: store,
-        navigationOptions: {
-            drawerLabel: "Media",
-            drawerIcon: () => (
-                <Icon name='folder' size={25} type='material-community' color='rgba(0,0,0,1)' />
-            )
-        },
-    },
     Shop: {
         screen: productList,
         navigationOptions: {
             drawerLabel: "Shop",
             drawerIcon: () => (
                 <Icon name='shopping-basket' size={25} type='material' color='rgba(0,0,0,1)' />
+            )
+        },
+    },
+    Bidding: {
+        screen: biddingList,
+        navigationOptions: {
+            drawerLabel: "Bidding",
+            drawerIcon: () => (
+                <Icon name='dollar' size={25} type='font-awesome' color='rgba(0,0,0,1)' />
             )
         },
     },
@@ -344,6 +374,15 @@ const MyDrawerNavigator = createDrawerNavigator({
             )
         },
     },
+    Logout: {
+        screen: logOut,
+        navigationOptions: {
+            drawerLabel: "Logout",
+            drawerIcon: () => (
+                <Icon name='logout' size={30} type='material-community' color='rgba(0,0,0,1)' />
+            )
+        },
+    },
 },
     {
         contentComponent: DrawerContent,
@@ -361,36 +400,17 @@ const MyDrawerNavigator = createDrawerNavigator({
         drawerBackgroundColor: 'rgba(255,255,255,1)',
     })
 
+
 const MainNavigator = createStackNavigator({
     App: { screen: App, headerShown: false },
     Home: { screen: MyDrawerNavigator },
     Login: { screen: login },
-    Categories: { screen: categories },
-    PetDetails: { screen: petDetails },
-    ItemList: { screen: itemList },
     Registration: { screen: registration },
     CreateAccount: { screen: createAccount },
-    DoctorAppoinment: { screen: doctorAppoinment },
-    BookingConfirm: { screen: bookingConfirm },
-    Store: { screen: store },
-    ProductList: { screen: productList },
-    CartPage: { screen: cartPage },
-    MyAccount: { screen: myAccount },
-    MyProfile: { screen: myProfile },
-    OrderListing: { screen: orderListing },
-    BillingAddress: { screen: billingAddress },
-    CartBillingAddress: { screen: cartBillingAddress },
-    OrderDetails: { screen: orderDetails },
-    ProductReview: { screen: productReview },
-    PaymentDetails: { screen: paymentDetails },
     OrderSuccess: { screen: orderSuccess },
     LogOut: { screen: logOut },
-    DoctorsList: { screen: doctorsList },
-    DoctorDetails: { screen: doctorDetails },
+    UpgradeSuccess: { screen: upgradeSuccess },
     UserReg: { screen: userReg },
-    MemebershipAccount: { screen: memebershipAccount },
-    MemebershipAccountPayment: { screen: memebershipAccountPayment },
-    UpgradeSuccess: { screen: upgradeSuccess }
 },
     { headerMode: 'none' }
 );
