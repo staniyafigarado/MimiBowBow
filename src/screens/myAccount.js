@@ -16,16 +16,26 @@ import {
     WaveIndicator,
 } from 'react-native-indicators';
 
+import AsyncStorage from '@react-native-community/async-storage';
+
 const { width, height } = Dimensions.get('window')
 
 export default class App extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            avatarSource: null
+            avatarSource: null, userid: '', profile: '', username: ''
         }
         this.selectPhotoTapped = this.selectPhotoTapped.bind(this);
     }
+
+    componentDidMount = () => {
+        //   const Userid = await AsyncStorage.getItem('user_id');
+        // AsyncStorage.getItem('user_id').then((value) => this.setState({ 'userid': value }))
+        AsyncStorage.getItem('profile').then((value) => this.setState({ 'profile': value }))
+        AsyncStorage.getItem('username').then((value) => this.setState({ 'username': value }))
+    }
+
     // Image picker
     selectPhotoTapped() {
         const options = {
@@ -69,11 +79,13 @@ export default class App extends React.Component {
                 />
             </View>
 
-        } else {
+        }
+
+        else {
             return <View>
                 <Image
-                    source={require('../assets/images/user.jpg')}
-                    style={{ height: height * .17, width: height * .17, borderRadius: height * .085 }}
+                    // source={require('../assets/images/user.jpg')}
+                    style={{ height: height * .17, width: height * .17, borderRadius: height * .085, backgroundColor: 'lightgray' }}
                 />
             </View>
         }
@@ -99,10 +111,16 @@ export default class App extends React.Component {
                     </TouchableOpacity>
                 </View>
                 <View style={{ height: height * .3, alignItems: 'center', justifyContent: 'space-evenly' }}>
-                    {this.renderFileData()}
+                    {this.state.profile ? (
+                        <Image
+                            source={{ uri: this.state.profile }}
+                            style={{ height: height * .17, width: height * .17, borderRadius: height * .085 }}
+                        />
+                    ) : this.renderFileData()}
                     <Text style={{ fontFamily: 'Montserrat-Medium', fontSize: 18 }}>
-                        User Name
+                        {this.state.username}
                     </Text>
+                    {/* <Text>{this.state.userid}</Text> */}
                     <TouchableOpacity onPress={this.selectPhotoTapped.bind(this)}>
                         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                             <Icon name='camera' size={20} type='material-community' color='#343434' />

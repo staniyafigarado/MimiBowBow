@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text, View, Dimensions, Image, TextInput, ImageBackground, Alert, } from 'react-native';
+import { Text, View, Dimensions, Image, TextInput, ImageBackground, Alert, Keyboard, KeyboardAvoidingView, } from 'react-native';
 import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
 import { Icon } from 'react-native-elements';
 import { StackActions, NavigationActions } from 'react-navigation';
@@ -7,107 +7,122 @@ import styles from '../styles/styles';
 import AsyncStorage from '@react-native-community/async-storage';
 import WooCommerce from '../utils/wooApi';
 const { width, height } = Dimensions.get('window')
-
+import axios from 'axios';
 
 export default class App extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            emailId: 'sreejith7482@gmail.com',
+            email: '',
             password: '',
+            validating: false, hidePassword: true
         };
     }
-    state = {
-        nameList: [],
-        pushData: [],
-        loggedIn: false
-    }
-    userLogin = () => {
+    insertData() {
+        axios.post('https://mimiandbowbow.com/alpha/wp-json/simple-jwt-authentication/v1/token?username=' + this.state.email + '&password=' + this.state.password)
 
-        const reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
-        if (this.state.emailId != '' || reg.test(this.state.emailId) === true) {
-            const { emailId } = this.state;
-            const { password } = this.state;
-            var FormData = require('form-data');
-            var data = new FormData();
-            data.append('username', 'sreejith7482@gmail.com');
-            data.append('password', 'orgRfIzWHCP1');
-
-            fetch('https://mimiandbowbow.com/test/api/auth/generate_auth_cookie/?username=sreejith7482@gmail.com&password=orgRfIzWHCP1', {
-                method: 'GET',
-
-            }).then((response) => response.json())
-                .then((responseJson) => {
-                    console.log(responseJson);
-
-                })
-                .catch((error) => {
-                    console.error(error);
-                });
-        }
-        else {
-            Alert.alert("Alert", "Please enter a valid mail ID");
-        }
-    }
-    gotoHome = async (response) => {
-        try {
-
-            console.log(response.data)
-            await AsyncStorage.setItem('userData', JSON.stringify(response.data));
-
-            // this.props.navigation.push('Home')
-            const resetAction = StackActions.reset({
-                index: 0,
-                actions: [NavigationActions.navigate({ routeName: 'Home' })],
+            .then(res => {
+                const data = res.data;
+                console.log(data);
+                let userDets = {
+                    username: res.data.user_nicename,
+                    email: res.data.user_email,
+                    // displayname: response.data.user_display_name
+                };
+                alert('Scucessfully signed in with email ' + userDets.email);
+                this.props.navigation.navigate("Home");
+                AsyncStorage.setItem('user_id', res.data.user_id);
+                AsyncStorage.setItem('username', res.data.username);
+            }).catch(error => {
+                alert("Something went wrong, Check your email and password.")
+                console.log(error)
             });
-            this.props.navigation.dispatch(resetAction);
-
-        } catch (error) {
-            Alert.alert("Alert", "An account is already registered with your email address. Please log in.");
-            console.log(error)
-        }
     }
 
+    async saveToStorage(userData) {
+        if (userData) {
+            console.log(userData);
+            await AsyncStorage.setItem('user', JSON.stringify({
+                isLoggedIn: true,
+                authToken: userData.auth_token,
+                id: userData.user_id,
+                name: userData.user_login
+            })
+            );
+            return true;
+        }
+
+        return false;
+    }
+    setPasswordVisibility = () => {
+        this.setState({ hidePassword: !this.state.hidePassword });
+    }
     render() {
         const { navigate } = this.props.navigation;
         return (
-            <ImageBackground source={require('../assets/images/SignUpBkGrnd.png')} style={{ width: '100%', height: '100%', resizeMode: 'stretch' }}>
-                <View style={{ height: height * .4, marginLeft: width * .05, paddingTop: height * .1 }}>
-                    <Text style={[styles.TitleText, { color: 'rgba(255,255,255,1)' }]} >Sign In</Text>
-                </View>
-                <View style={{ alignItems: 'center', paddingTop: height * .04 }}>
-                    <View style={styles.textInputLogin}>
-                        <TextInput style={styles.textinputText}
-                            placeholder="Email Address"
-                            keyboardType='email-address'
-                            returnKeyType={"next"}
-                            onChangeText={emailId => this.setState({ emailId })}
-                        />
+            <ScrollView style={{ flex: 1 }}>
+                <ImageBackground source={require('../assets/images/SignUpBkGrnd.png')} style={{
+                    width: Dimensions.get('window').width,
+                    height: Dimensions.get('window').height,
+                }}>
+                    <View style={{ height: height * .4, marginLeft: width * .05, paddingTop: height * .1 }}>
+                        <Text style={[styles.TitleText, { color: 'rgba(255,255,255,1)' }]} >Sign In</Text>
                     </View>
-                    <View style={styles.textInputLogin}>
-                        <TextInput style={styles.textinputText}
-                            placeholder="Password"
-                            keyboardType='email-address'
-                            returnKeyType={"next"}
-                            onChangeText={password => this.setState({ password })}
-                        />
+                    <View style={{ alignItems: 'center', paddingTop: height * .04 }}>
+                        <View style={styles.textInputLogin}>
+                            <TextInput style={styles.textinputText}
+                                placeholder="* Email Address"
+                                keyboardType='email-address'
+                                returnKeyType={"next"}
+                                onChangeText={email => this.setState({ email })}
+                            />
+                        </View>
+                        <View style={[styles.textInputPass, { alignItems: 'center' }]}>
+                            <TextInput style={[styles.textinputText, { width: '80%', }]}
+                                placeholder="* Password"
+                                keyboardType="default"
+                                returnKeyType={"next"}
+                                secureTextEntry={this.state.hidePassword}
+                                onChangeText={password => this.setState({ password })}
+                            />
+                            <TouchableOpacity onPress={this.setPasswordVisibility}>
+                                {
+                                    this.state.hidePassword ? <Icon name='eye-off' size={25} type='ionicon' color='#343434' /> : <Icon name='eye' size={25} type='ionicon' color='#343434' />
+                                }
+                            </TouchableOpacity>
+                        </View>
                     </View>
-                </View>
-
-                {/* <View style={{ alignItems: 'center' }}>
+                    <View style={{ width: width * .5, marginLeft: width * .42 }}>
+                        <TouchableOpacity
+                            onPress={() => {
+                                this.props.navigation.navigate('ForgotPass')
+                            }}
+                        >
+                            <Text style={[styles.textinputText, { textAlign: 'right' }]}>Forgot Password?</Text>
+                        </TouchableOpacity>
+                    </View>
+                    {/* <View style={{ alignItems: 'center' }}>
                     <TouchableOpacity onPress={() => this.userLogin()} style={[styles.textInputLogin, { alignItems: 'center', backgroundColor: '#343434', borderWidth: 0 }]}>
                         <Text style={[styles.TextiputHeader, { color: 'rgba(255,255,255,1)' }]} >CONTINUE</Text>
                     </TouchableOpacity>
 
                 </View> */}
-                {/* staniya new view */}
-                <View style={{ alignItems: 'center' }}>
-                    <TouchableOpacity onPress={() => this.props.navigation.navigate('Home')} style={[styles.textInputLogin, { alignItems: 'center', backgroundColor: '#343434', borderWidth: 0 }]}>
-                        <Text style={[styles.TextiputHeader, { color: 'rgba(255,255,255,1)' }]} >CONTINUE</Text>
-                    </TouchableOpacity>
+                    {/* staniya new view */}
+                    <View style={{ alignItems: 'center', marginTop: height * .05 }}>
+                        <TouchableOpacity
+                            // onPress={() => {
+                            //     if (this.state.email && this.state.password) {
+                            //         this.validate();
 
-                </View>
-                {/* <View style={{ justifyContent: 'center', flexDirection: 'row' }}>
+                            //     }
+                            // }}
+                            onPress={() => this.insertData()}
+                            style={[styles.textInputLogin, { alignItems: 'center', backgroundColor: '#343434', borderWidth: 0 }]}>
+                            <Text style={[styles.TextiputHeader, { color: 'rgba(255,255,255,1)' }]} >CONTINUE</Text>
+                        </TouchableOpacity>
+
+                    </View>
+                    {/* <View style={{ justifyContent: 'center', flexDirection: 'row' }}>
                     <TouchableOpacity
                         onPress={() => {
                             this.loginWithFacebook(navigate);
@@ -122,7 +137,8 @@ export default class App extends React.Component {
                         <Icon name='google-plus' size={40} type='material-community' color='#343434' />
                     </View>
                 </View> */}
-            </ImageBackground>
+                </ImageBackground>
+            </ScrollView>
         );
     }
 }

@@ -56,7 +56,16 @@ const styles = StyleSheet.create({
         borderRadius: width * .45,
         borderColor: 'rgba(0,0,0,0.2)',
         marginBottom: height * .035,
-        justifyContent: 'center'
+        justifyContent: 'center',
+    },
+    textInputPass: {
+        width: width * .9,
+        height: height * 0.09,
+        backgroundColor: 'rgba(255,255,255,1)',
+        borderRadius: width * .45,
+        borderColor: 'rgba(0,0,0,0.2)',
+        marginBottom: height * .035,
+        flexDirection: 'row'
     },
     textinputText: {
         fontSize: 20,

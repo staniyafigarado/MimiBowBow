@@ -73,6 +73,9 @@ import memebershipAccountPayment from '../screens/membershipAccountPayment';
 import upgradeSuccess from '../screens/upgradeSuccess';
 import biddingList from '../screens/biddingList';
 import biddingDetails from '../screens/biddingDetails';
+import example from '../screens/example';
+import forgotPass from '../screens/forgotPass';
+import splash from '../screens/splashScreen';
 const { width, height } = Dimensions.get('window')
 
 const DrawerContent = (props) => (
@@ -125,74 +128,74 @@ const DrawerContent = (props) => (
 )
 
 
-class App extends React.Component {
+// class App extends React.Component {
 
-    constructor() {
-        super();
-        this.state = {
-            isVisible: true,
-        }
-    }
-    static navigationOptions = {
-        headerShown: false
-    };
-    Hide_Splash_Screen = () => {
-        this.setState({
-            isVisible: false
-        });
+//     constructor() {
+//         super();
+//         this.state = {
+//             isVisible: true,
+//         }
+//     }
+//     static navigationOptions = {
+//         headerShown: false
+//     };
+//     Hide_Splash_Screen = () => {
+//         this.setState({
+//             isVisible: false
+//         });
 
-        this.retrieveData()
-    }
-    async retrieveData() {
-        try {
+//         this.retrieveData()
+//     }
+//     async retrieveData() {
+//         try {
 
-            const userData = await AsyncStorage.getItem('userData');
+//             const userData = await AsyncStorage.getItem('userData');
 
-            if (userData !== null) {
-                const resetAction = StackActions.reset({
-                    index: 0,
-                    actions: [NavigationActions.navigate({ routeName: 'Home' })],
-                });
-                this.props.navigation.dispatch(resetAction);
-            }
-            else
-                this.props.navigation.push('Registration')
-            //this.props.navigation.push('Home')
-        } catch (error) {
+//             if (userData !== null) {
+//                 const resetAction = StackActions.reset({
+//                     index: 0,
+//                     actions: [NavigationActions.navigate({ routeName: 'Home' })],
+//                 });
+//                 this.props.navigation.dispatch(resetAction);
+//             }
+//             else
+//                 this.props.navigation.push('Registration')
+//             //this.props.navigation.push('Home')
+//         } catch (error) {
 
-        }
-    }
-    componentDidMount() {
-        var that = this;
-        setTimeout(function () {
-            that.Hide_Splash_Screen();
-        }, 2000);
-    }
-    //    componentWillUnmount() {
-    //         this.onTokenRefreshListener();
-    //         this.messageListener();
-    //    }
+//         }
+//     }
+//     componentDidMount() {
+//         var that = this;
+//         setTimeout(function () {
+//             that.Hide_Splash_Screen();
+//         }, 2000);
+//     }
+//     //    componentWillUnmount() {
+//     //         this.onTokenRefreshListener();
+//     //         this.messageListener();
+//     //    }
 
-    render() {
+//     render() {
 
-        return (
+//         return (
 
-            <ImageBackground source={require('../assets/images//splash.png')} style={{ width: '100%', height: '100%', resizeMode: 'stretch' }}>
-                <StatusBar barStyle="dark-content" hidden={true} backgroundColor="rgba(255,255,255,1)" translucent={true} />
-                <View style={{ flex: 1, justifyContent: 'flex-end', width: width * .6, marginLeft: width * .2 }}>
+//             <ImageBackground source={require('../assets/images//splash.png')} style={{ width: '100%', height: '100%', resizeMode: 'stretch' }}>
+//                 <StatusBar barStyle="dark-content" hidden={true} backgroundColor="rgba(255,255,255,1)" translucent={true} />
+//                 <View style={{ flex: 1, justifyContent: 'flex-end', width: width * .6, marginLeft: width * .2 }}>
 
-                    <ProgressBar styleAttr="Horizontal" color="#343434" />
-                    {/* <PacmanIndicator
-                count={5}
-                color='#FDC500'
-                animationDuration={600}
-                size={100}
-              />  */}
-                </View>
-            </ImageBackground>
-        );
-    }
-};
+//                     <ProgressBar styleAttr="Horizontal" color="#343434" />
+//                     {/* <PacmanIndicator
+//                 count={5}
+//                 color='#FDC500'
+//                 animationDuration={600}
+//                 size={100}
+//               />  */}
+//                 </View>
+//             </ImageBackground>
+//         );
+//     }
+// };
 
 
 
@@ -219,7 +222,8 @@ const StackNav = createStackNavigator({
     MemebershipAccount: { screen: memebershipAccount },
     MemebershipAccountPayment: { screen: memebershipAccountPayment },
     BiddingList: { screen: biddingList },
-    BiddingDetails: { screen: biddingDetails }
+    BiddingDetails: { screen: biddingDetails },
+    Example: { screen: example }
 },
     { headerMode: 'none' }
 );
@@ -402,15 +406,16 @@ const MyDrawerNavigator = createDrawerNavigator({
 
 
 const MainNavigator = createStackNavigator({
-    App: { screen: App, headerShown: false },
+    Splash: { screen: splash, headerShown: false },
+    Registration: { screen: registration },
     Home: { screen: MyDrawerNavigator },
     Login: { screen: login },
-    Registration: { screen: registration },
     CreateAccount: { screen: createAccount },
     OrderSuccess: { screen: orderSuccess },
     LogOut: { screen: logOut },
     UpgradeSuccess: { screen: upgradeSuccess },
     UserReg: { screen: userReg },
+    ForgotPass: { screen: forgotPass }
 },
     { headerMode: 'none' }
 );

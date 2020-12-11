@@ -31,10 +31,12 @@ export default class App extends React.Component {
             productData: [],
             cartData: [],
             btnValue: 1,
-            isVisible: false,
+            isVisible: false,Userid:''
         };
     }
     componentDidMount = async () => {
+        //   const Userid = await AsyncStorage.getItem('user_id');
+          AsyncStorage.getItem('user_id').then((value) => this.setState({ 'userid': value }))
         const { navigation } = this.props;
         const petData = navigation.getParam('petData', 'Null');
 
@@ -104,6 +106,7 @@ export default class App extends React.Component {
         });
     }
     render() {
+        
         if (this.state.isLoading) {
             return (
                 <View style={{ flex: 1, backgroundColor: '#f5c711' }}>
@@ -136,6 +139,7 @@ export default class App extends React.Component {
                             <Icon name='cart' size={40} type='material-community' color='#343434' />
                         </TouchableOpacity>
                     </View>
+                  
                     <View style={{ flexDirection: 'row', marginLeft: width * .05, alignItems: 'center' }}>
                         <View>
                             <Text style={[styles.TitleText, { color: 'rgba(255,255,255,1)', width: width * .7 }]}>{this.state.productData.name}</Text>
@@ -143,6 +147,7 @@ export default class App extends React.Component {
                         </View>
                         <Icon name='share-variant' size={25} type='material-community' color='rgba(255,255,255,1)' margin={20} />
                     </View>
+                    
                     <ScrollView>
                         <View style={{ borderRadius: 5, width: width * .9, margin: width * .05, height: height * .7 }}>
                             <Image

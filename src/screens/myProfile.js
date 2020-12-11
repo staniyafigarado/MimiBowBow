@@ -10,6 +10,7 @@ import { Container, Header, Content, DatePicker, Button } from 'native-base';
 import { Picker } from '@react-native-community/picker';
 import styles from '../styles/styles';
 import WooCommerce from '../utils/wooApi';
+import AsyncStorage from '@react-native-community/async-storage';
 import {
     BallIndicator,
     BarIndicator,
@@ -34,18 +35,27 @@ export default class App extends React.Component {
             editStatus: 0,
             userName: '',
             phoneNo: '',
-            emailId: '',
+            emailId: '', dataSource: [], userid: '', username: '', email: ''
         };
     }
     componentDidMount() {
-        WooCommerce.get('customers/' + 3).then(response => {
-            this.setState({
-                dataSource: response.data,
-                isLoading: false,
+        // const userData = await AsyncStorage.getItem('user_id');
+        AsyncStorage.getItem('user_id').then((value) => this.setState({ 'userid': value }))
+        AsyncStorage.getItem('username').then((value) => this.setState({ 'username': value }))
+        AsyncStorage.getItem('email').then((value) => this.setState({ 'email': value }))
+        WooCommerce.get('customers/' + 135)
+            .then(res => {
+                console.log(res.data);
+
+                this.setState({
+                    dataSource: res.data,
+                    isLoading: false,
+
+                });
+            })
+            .catch(error => {
+                console.log(error);
             });
-        }).catch(error => {
-            console.log(error);
-        });
     }
     editStatusFun = (value) => {
         this.setState({
@@ -54,9 +64,9 @@ export default class App extends React.Component {
     }
     upadateUser = () => {
         console.log("456");
-        WooCommerce.put('customers/' + 3, {
+        WooCommerce.put('customers/' + 1, {
             first_name: this.state.userName,
-            billing: { phone: this.state.phoneNo }
+            // billing: { phone: this.state.phoneNo }
 
 
         }).then(response => {
@@ -75,6 +85,23 @@ export default class App extends React.Component {
             console.log(error + "456");
         });
     }
+    handleSubmit = () => {
+        // e.preventDefault();
+        // this.getWPnonce();
+
+        WooCommerce.post('customers/' + 109, {
+            username: this.state.userName,
+            // email: this.state.emailId
+        })
+            .then(data => {
+                // ToastAndroid.show("Successfull", ToastAndroid.SHORT);
+                // this.props.navigation.navigate("Login");
+                console.log(data.data);
+            })
+            .catch(error => {
+                console.log(error);
+            });
+    }
     render() {
         if (this.state.isLoading) {
             return (
@@ -88,7 +115,10 @@ export default class App extends React.Component {
                 </View>
             );
         }
+        const { dataSource } = this.state;
         return (
+
+
             <View style={{ flex: 1, backgroundColor: '#f5c711' }}>
                 <View style={{ flexDirection: 'row', height: height * .1, alignItems: 'center', justifyContent: 'space-between', margin: width * .05 }}>
                     <TouchableOpacity
@@ -107,6 +137,8 @@ export default class App extends React.Component {
                         <Icon name='cart' size={40} type='material-community' color='#343434' />
                     </TouchableOpacity>
                 </View>
+                {/* <Text>{this.state.user}</Text> */}
+                <Text>{this.state.userid}</Text>
                 {this.state.editStatus == 0 ?
                     <View>
                         <View style={{ flexDirection: 'row', height: height * .1, alignItems: 'center', justifyContent: 'space-between', marginLeft: width * .05, marginRight: width * .05 }}>
@@ -118,18 +150,21 @@ export default class App extends React.Component {
 
 
                         <View style={{ alignItems: 'center' }}>
-                            <View style={styles.profileTextInput}>
-                                <Text style={styles.textinputText}>John Doe</Text>
+                            <Text style={{ alignSelf: 'flex-start', color: '#343434', fontSize: 15, fontFamily: 'Montserrat-SemiBold', paddingBottom: 3, paddingLeft: width * 0.05 }}>User Name</Text>
+                            <View style={[styles.profileTextInput]}>
+                                <Text style={styles.textinputText}>{dataSource.username ? dataSource.username : this.state.username}</Text>
                             </View>
                         </View>
                         <View style={{ alignItems: 'center' }}>
+                            <Text style={{ alignSelf: 'flex-start', color: '#343434', fontSize: 15, fontFamily: 'Montserrat-SemiBold', paddingBottom: 3, paddingLeft: width * 0.05 }}>Phone Number</Text>
                             <View style={styles.profileTextInput}>
-                                <Text style={styles.textinputText}>8565478956</Text>
+                                <Text style={styles.textinputText}>{dataSource.billing.phone}</Text>
                             </View>
                         </View>
                         <View style={{ alignItems: 'center' }}>
+                            <Text style={{ alignSelf: 'flex-start', color: '#343434', fontSize: 15, fontFamily: 'Montserrat-SemiBold', paddingBottom: 3, paddingLeft: width * 0.05 }}>Email Id</Text>
                             <View style={styles.profileTextInput}>
-                                <Text style={styles.textinputText}>Johndoe@gmail.com</Text>
+                                <Text style={styles.textinputText}>{dataSource.email ? dataSource.email : this.state.email}</Text>
                             </View>
                         </View>
                         {/* <View style={{ alignItems: 'center' }}>
@@ -138,8 +173,10 @@ export default class App extends React.Component {
                             </View>
                         </View> */}
                         <View style={{ alignItems: 'center' }}>
+                            <Text style={{ alignSelf: 'flex-start', color: '#343434', fontSize: 15, fontFamily: 'Montserrat-SemiBold', paddingBottom: 3, paddingLeft: width * 0.05 }}>Address</Text>
                             <View style={styles.profileTextInput}>
-                                <Text style={styles.textinputText} >Address</Text>
+                                {/* <Text style={styles.textinputText} >{this.state.dataSource.billing.address_1},{this.state.dataSource.billing.address_2}</Text> */}
+                                <Text style={styles.textinputText}>{dataSource.billing.address_1 ? dataSource.billing.address_1 + ',' + dataSource.billing.address_2 : 'Address'}</Text>
                             </View>
                         </View>
 
@@ -192,7 +229,7 @@ export default class App extends React.Component {
                             </View>
                             <View style={{ alignItems: 'center' }}>
                                 <TouchableOpacity
-                                    onPress={() => { this.upadateUser() }}
+                                    onPress={() => { this.handleSubmit() }}
                                     style={{ width: width * .9, marginTop: width * .05, alignItems: 'center', justifyContent: 'center', backgroundColor: '#343434', height: height * 0.08, borderRadius: 3 }}>
                                     <Text style={[styles.TextiputHeader, { color: 'rgba(255,255,255,1)' }]}>SUBMIT</Text>
                                 </TouchableOpacity>

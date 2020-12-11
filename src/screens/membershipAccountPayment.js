@@ -3,6 +3,7 @@ import { StatusBar, Text, View, Dimensions, Image, TouchableOpacity, FlatList } 
 import { Icon, SearchBar, Badge } from 'react-native-elements';
 import styles from '../styles/styles';
 import { RadioButton, TextInput } from 'react-native-paper';
+import axios from 'axios';
 const { width, height } = Dimensions.get('window');
 const data = [
     {
@@ -25,6 +26,28 @@ export default class JustifyContentBasics extends Component {
             value: 0,
         };
     }
+
+    insertData() {
+        axios.post('https://mimiandbowbow.com/alpha/?swpm_api_action=update&key=7e8657a1d5cabccdf5748f569e9bbcad&member_id=51&first_name=bilbin&last_name=thomas&email=bilginthomas1997@gmail.com&password=321')
+
+            .then(res => {
+                const data = res.data;
+                console.log(data);
+                // let userDets = {
+                //     username: res.data.user_nicename,
+                //     email: res.data.user_email,
+                //     // displayname: response.data.user_display_name
+                // };
+                // alert('Scucessfully signed in with email ' + userDets.email);
+                // this.props.navigation.navigate("Home");
+                // AsyncStorage.setItem('user_id', res.data.user_email);
+            }).catch(error => {
+                alert("Something went wrong, Check your email and password.")
+                console.log(error)
+            });
+    }
+
+
     render() {
         return (
             <View style={{ flex: 1, backgroundColor: '#f5c711' }}>
@@ -76,7 +99,10 @@ export default class JustifyContentBasics extends Component {
                 </View>
                 <View style={{ alignItems: 'center', paddingBottom: height * .025 }}>
                     <TouchableOpacity
-                        onPress={() => this.props.navigation.navigate('UpgradeSuccess')}
+                        onPress={() =>
+                            this.insertData()
+                            // this.props.navigation.navigate('UpgradeSuccess')
+                        }
                         style={{ width: width * .9, marginTop: width * .05, alignItems: 'center', justifyContent: 'center', backgroundColor: '#343434', height: height * 0.08, borderRadius: 3 }}>
                         <Text style={[styles.TextiputHeader, { color: 'rgba(255,255,255,1)' }]}>CONTINUE</Text>
                     </TouchableOpacity>

@@ -32,37 +32,37 @@ export default class App extends React.Component {
             isLoading: true,
             gridView: true,
             selectedCategory: '',
-            userId: '',
+            userid: '', dataSource: []
         };
     }
     componentDidMount = async () => {
         const userData = (JSON.parse(await AsyncStorage.getItem('userData')));
-        WooCommerce.get('orders').then(response => {
+        AsyncStorage.getItem('user_id').then((value) => this.setState({ 'userid': value }))
+        WooCommerce.get('orders/').then(response => {
             console.log(response.data + "123");
             this.setState({
                 dataSource: response.data,
                 isLoading: false,
-                userId: userData.id
+                // userId: userData.id
             });
         }).catch(error => {
-            console.log(error + "123");
+            console.log(error + "1235");
         });
-        console.log(this.state.dataSource + "Hi")
 
     }
     render() {
-        if (this.state.isLoading) {
-            return (
-                <View style={{ flex: 1, backgroundColor: '#f5c711' }}>
-                    <PacmanIndicator
-                        count={5}
-                        color='black'
-                        animationDuration={600}
-                        size={100}
-                    />
-                </View>
-            );
-        }
+        // if (this.state.isLoading) {
+        //     return (
+        //         <View style={{ flex: 1, backgroundColor: '#f5c711' }}>
+        //             <PacmanIndicator
+        //                 count={5}
+        //                 color='black'
+        //                 animationDuration={600}
+        //                 size={100}
+        //             />
+        //         </View>
+        //     );
+        // }
 
         return (
             <View style={{ flex: 1, backgroundColor: '#f5c711' }}>
@@ -97,42 +97,40 @@ export default class App extends React.Component {
 
                 </View>
                 <ScrollView>
-
-
                     <View style={{ flexDirection: 'row', marginLeft: width * .025 }}>
                         <FlatList
                             keyExtractor={(item, index) => index}
                             data={this.state.dataSource}
                             renderItem={({ item, index }) => (
-                                item.customer_id === this.state.userId ?
-                                    <TouchableOpacity onPress={() => this.props.navigation.navigate('OrderDetails', {
-                                        orderId: item.id,
-                                    })} style={{ flexDirection: 'row', width: width * .90, height: height * .17, backgroundColor: 'white', margin: width * .025, borderRadius: 5 }}>
-                                        <Image
-                                            source={require('../assets/images/kitty.png')}
-                                            style={{ width: height * .14, height: height * .14, margin: height * .015 }}
-                                        />
-                                        <View style={{ justifyContent: 'space-between', padding: 10 }}>
+                                // item.customer_id === this.state.userId ?
+                                <TouchableOpacity onPress={() => this.props.navigation.navigate('OrderDetails', {
+                                    orderId: item.id,
+                                })} style={{ flexDirection: 'row', width: width * .90, height: height * .17, backgroundColor: 'white', margin: width * .025, borderRadius: 5 }}>
+                                    <Image
+                                        source={require('../assets/images/kitty.png')}
+                                        style={{ width: height * .14, height: height * .14, margin: height * .015 }}
+                                    />
+                                    <View style={{ justifyContent: 'space-between', padding: 10 }}>
 
-                                            {/* <Text style={{ fontFamily: 'Montserrat-Regular' }}>Order date :{item.date_created}</Text>
-                                            <Text style={{ fontFamily: 'Montserrat-Regular' }}>No.of Items :{(item.line_items).length}</Text>
-                                            <Text style={{ fontFamily: 'Montserrat-Regular' }}>Order Id:  {item.id}</Text>
-                                            <Text style={{ fontFamily: 'Montserrat-Regular', fontWeight: 'bold' }}>Total: {item.total}</Text> */}
-                                            <Text style={{ fontFamily: 'Montserrat-Regular' }}>Order date : 20/10/2020</Text>
+                                        <Text style={{ fontFamily: 'Montserrat-Regular' }}>Order date :{item.date_created}</Text>
+                                        <Text style={{ fontFamily: 'Montserrat-Regular' }}>No.of Items :{(item.line_items).length}</Text>
+                                        <Text style={{ fontFamily: 'Montserrat-Regular' }}>Order Id:  {item.id}</Text>
+                                        <Text style={{ fontFamily: 'Montserrat-Regular', fontWeight: 'bold' }}>Total: {item.total}</Text>
+                                        {/* <Text style={{ fontFamily: 'Montserrat-Regular' }}>Order date : 20/10/2020</Text>
                                             <Text style={{ fontFamily: 'Montserrat-Regular' }}>No.of Items : 1</Text>
                                             <Text style={{ fontFamily: 'Montserrat-Regular' }}>Order Id: 1001</Text>
-                                            <Text style={{ fontFamily: 'Montserrat-Regular', fontWeight: 'bold' }}>Total: 1000</Text>
-                                        </View>
-                                        {/* <View style={{ justifyContent: 'space-between', padding: 10 }}>
+                                            <Text style={{ fontFamily: 'Montserrat-Regular', fontWeight: 'bold' }}>Total: 1000</Text> */}
+                                    </View>
+                                    {/* <View style={{ justifyContent: 'space-between', padding: 10 }}>
 
                                             <Text style={{ fontFamily: 'Montserrat-Regular' }}>Order date :12/8/1/2020</Text>
                                             <Text style={{ fontFamily: 'Montserrat-Regular' }}>No.of Items :1</Text>
                                             <Text style={{ fontFamily: 'Montserrat-Regular' }}>Order Id:  1002</Text>
                                             <Text style={{ fontFamily: 'Montserrat-Regular', fontWeight: 'bold' }}>Total: 1000</Text>
                                         </View> */}
-                                    </TouchableOpacity>
-                                    :
-                                    null
+                                </TouchableOpacity>
+                                // :
+                                // null
                             )}
                         />
                     </View>
