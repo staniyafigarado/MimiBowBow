@@ -64,13 +64,14 @@ export default class App extends React.Component {
                 const data = res.data;
                 if (data.error) {
                     alert(data.error)
+                    console.log("nounce", data.error)
                 } else {
-                    console.log(data);
-                    this.props.navigation.navigate("Login");
+                    console.log("nouncee", data);
+                    // this.props.navigation.navigate("Login");
                 }
                 // this.props.navigation.navigate("Login");
             }).catch(error => {
-                console.log(error)
+                console.log("error", error)
             });
     }
 
@@ -78,30 +79,30 @@ export default class App extends React.Component {
         axios.get('https://mimiandbowbow.com/alpha/api/get_nonce/?controller=user&method=register')
             .then(res => {
                 this.insertData(res.data.nonce);
-                // console.log(res.data.nonce);
+                console.log("get", res.data.nonce);
             }).catch(error => {
-                // console.log(error.response)
+                console.log("gete", error.response)
             });
     }
 
     handleSubmit = () => {
         // e.preventDefault();
-        // this.getWPnonce();
+        this.getWPnonce();
 
-        WooCommerce.post('customers', {
-            email: this.state.email,
-            username: this.state.username,
-            password: this.state.password
-        })
-            .then(data => {
-                ToastAndroid.show("Successfull", ToastAndroid.SHORT);
-                AsyncStorage.setItem('username', this.state.username);
-                this.props.navigation.navigate("Login");
-                console.log(data);
-            })
-            .catch(error => {
-                console.log(error);
-            });
+        // WooCommerce.post('customers', {
+        //     email: this.state.email,
+        //     username: this.state.username,
+        //     password: this.state.password
+        // })
+        //     .then(data => {
+        //         ToastAndroid.show("Successfull", ToastAndroid.SHORT);
+        //         AsyncStorage.setItem('username', this.state.username);
+        //         this.props.navigation.navigate("Login");
+        //         console.log(data);
+        //     })
+        //     .catch(error => {
+        //         console.log(error);
+        //     });
     }
     setPasswordVisibility = () => {
         this.setState({ hidePassword: !this.state.hidePassword });
