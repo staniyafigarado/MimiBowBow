@@ -299,24 +299,24 @@ export default class App extends Component {
     _configureGoogleSignIn() {
         GoogleSignin.configure({
             ClientId: '522544017492-hqmtlkf1dggp9tmaste8nmc3j5dimoft.apps.googleusercontent.com',
-            scopes: ['openid', 'email', 'profile'],
+            scopes: ['https://www.googleapis.com/auth/drive.readonly'],
             shouldFetchBasicProfile: true,
         });
-        this._isSignedIn();
+        // this._isSignedIn();
     }
 
-    _isSignedIn = async () => {
-        const isSignedIn = await GoogleSignin.isSignedIn();
-        if (isSignedIn) {
-            // alert('User is already signed in');
-            this.props.navigation.navigate('Home');
-            // Set User Info if user is already signed in
-            _getCurrentUserInfo();
-        } else {
-            console.log('Please Login');
-        }
-        setGettingLoginStatus(false);
-    };
+    // _isSignedIn = async () => {
+    //     const isSignedIn = await GoogleSignin.isSignedIn();
+    //     if (isSignedIn) {
+    //         // alert('User is already signed in');
+    //         this.props.navigation.navigate('Home');
+    //         // Set User Info if user is already signed in
+    //         _getCurrentUserInfo();
+    //     } else {
+    //         console.log('Please Login');
+    //     }
+    //     setGettingLoginStatus(false);
+    // };
     async GoogleSignin() {
         try {
             await GoogleSignin.hasPlayServices();
