@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text, View, Dimensions, Image, BackHandler, FlatList, TextInput, Alert, KeyboardAvoidingView } from 'react-native';
+import { Text, View, Dimensions, Image, BackHandler, FlatList, TextInput, Alert, KeyboardAvoidingView, ToastAndroid } from 'react-native';
 import SearchBar from 'react-native-search-bar';
 import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
 import { Icon, CheckBox } from 'react-native-elements';
@@ -20,7 +20,7 @@ import {
 } from 'react-native-indicators';
 
 const DataArray = require("../screens/categoryData.json");
-
+import RazorpayCheckout from 'react-native-razorpay';
 const { width, height } = Dimensions.get('window')
 
 export default class App extends React.Component {
@@ -50,10 +50,23 @@ export default class App extends React.Component {
             shippingstateName: '',
             shippingcountryName: '',
             shippingpostCode: '',
-            checked: true,
+            checked: true, loginData: ''
         };
     }
     componentDidMount = async () => {
+        try {
+            let data = await AsyncStorage.getItem('loginDetails');
+            console.log('Data 100', data);
+            if (data !== null) {
+                this.setState({ loginData: JSON.parse(data) });
+                // this.props.setLoginData(data);
+            }
+            // this.setState({SchoolImage: JSON.parse(data)}, () =>
+            //   console.log('pling', this.state.SchoolImage),
+            // );
+        } catch (error) {
+            console.log('Something went wrong', error);
+        }
         const userData = (JSON.parse(await AsyncStorage.getItem('userData')));
         WooCommerce.get('customers/' + (userData.id)).then(response => {
             this.setState({
@@ -144,7 +157,7 @@ export default class App extends React.Component {
                         Alert.alert("Alert", "Invalid Phone Number");
                     }
                     else {
-                        WooCommerce.put('customers/' + (userData.id), {
+                        WooCommerce.put('customers/' + this.state.loginData.user_id, {
                             billing: {
                                 first_name: this.state.firstName,
                                 last_name: this.state.lastName,
@@ -163,7 +176,7 @@ export default class App extends React.Component {
                         }).catch(error => {
                             console.log(error + "456");
                         });
-                        WooCommerce.put('customers/' + (userData.id), {
+                        WooCommerce.put('customers/' + this.state.loginData.user_id, {
                             shipping: {
                                 first_name: this.state.firstName,
                                 last_name: this.state.lastName,
@@ -177,7 +190,8 @@ export default class App extends React.Component {
                             }
                         }).then(response => {
                             console.log(response);
-                            Alert.alert("Information", "Updated Successfully");
+                            // Alert.alert("Information", "Updated Successfully");
+                            ToastAndroid.show("Updated Successfully", ToastAndroid.SHORT);
                             this.props.navigation.navigate('PaymentDetails')
                         }).catch(error => {
                             console.log(error + "456");
@@ -202,7 +216,7 @@ export default class App extends React.Component {
                         Alert.alert("Alert", "Invalid Phone Number");
                     }
                     else {
-                        WooCommerce.put('customers/' + 3, {
+                        WooCommerce.put('customers/' + this.state.loginData.user_id, {
                             billing: {
                                 first_name: this.state.firstName,
                                 last_name: this.state.lastName,
@@ -221,7 +235,7 @@ export default class App extends React.Component {
                         }).catch(error => {
                             console.log(error + "456");
                         });
-                        WooCommerce.put('customers/' + 3, {
+                        WooCommerce.put('customers/' + this.state.loginData.user_id, {
                             shipping: {
                                 first_name: this.state.shippingfirstName,
                                 last_name: this.state.shippinglastName,
@@ -307,293 +321,326 @@ export default class App extends React.Component {
         // });
 
     }
+    handlePayment() {
+        var options = {
+            description: 'MimiBowBow',
+            image: 'https://i.imgur.com/3g7nmJC.png',
+            currency: 'INR',
+            key: 'rzp_test_mEZUIlmpj11S15',
+            amount: '5000',
+            name: 'Acme Corp',
+            // order_id: 'order_DslnoIgkIDL8Zt',//Replace this with an order_id created using Orders API. Learn more at https://razorpay.com/docs/api/orders.
+            prefill: {
+                email: 'staniyafigarado@gmail.com',
+                contact: '9656039412',
+                name: 'staniya figarado'
+            },
+            theme: { color: '#f5c711' }
+        }
+        RazorpayCheckout.open(options).then((data) => {
+            // handle success
+            alert(`Success: ${data.razorpay_payment_id}`);
+        }).catch((error) => {
+            // handle failure
+            alert(`Error: ${error.code} | ${error.description}`);
+        });
+    }
     render() {
-        if (this.state.isLoading) {
-            return (
-                <View style={{ flex: 1, backgroundColor: '#f5c711' }}>
-                    <PacmanIndicator
-                        count={5}
-                        color='black'
-                        animationDuration={600}
-                        size={100}
+        // if (this.state.isLoading) {
+        //     return (
+        //         <View style={{ flex: 1, backgroundColor: '#FFF' }}>
+        //             <PacmanIndicator
+        //                 count={5}
+        //                 color='#343434'
+        //                 animationDuration={600}
+        //                 size={100}
+        //             />
+        //         </View>
+        //     );
+        // }
+        return (
+            <View style={{ flex: 1, backgroundColor: '#f5c711' }}>
+                <View style={{ flexDirection: 'row', height: height * .1, alignItems: 'center', justifyContent: 'space-between', margin: width * .05 }}>
+                    <TouchableOpacity
+                        onPress={() => { this.props.navigation.toggleDrawer(); }}
+                    >
+                        <Icon name='menu' size={40} type='material-icons' color='#343434' />
+                    </TouchableOpacity>
+                    <Image
+                        source={require('../assets/images/logo.png')}
+                        style={{ width: height * .07, height: height * .07 }}
                     />
-                </View>
-            );
-        }
-        else {
-            return (
-                <View style={{ flex: 1, backgroundColor: '#f5c711' }}>
-                    <View style={{ flexDirection: 'row', height: height * .1, alignItems: 'center', justifyContent: 'space-between', margin: width * .05 }}>
-                        <TouchableOpacity
-                            onPress={() => { this.props.navigation.toggleDrawer(); }}
-                        >
-                            <Icon name='menu' size={40} type='material-icons' color='#343434' />
-                        </TouchableOpacity>
-                        <Image
-                            source={require('../assets/images/logo.png')}
-                            style={{ width: height * .07, height: height * .07 }}
-                        />
-                        <Text style={{ fontFamily: 'Montserrat-Regular', fontSize: 17 }}>
-                            Mimi and Bow Bow
+                    <Text style={{ fontFamily: 'Montserrat-Regular', fontSize: 17 }}>
+                        Mimi and Bow Bow
                         </Text>
-                        <TouchableOpacity onPress={() => this.props.navigation.navigate('CartPage')}>
-                            <Icon name='cart' size={40} type='material-community' color='#343434' />
-                        </TouchableOpacity>
-                    </View>
-                    <View style={[styles.textInput, { marginLeft: width * .05, borderWidth: 0, marginBottom: 3, elevation: 5 }]}>
-                        <SearchBar
-                            //ref="searchBar"
-                            placeholder="Search Here"
-                        //onChangeText={...}
-                        //onSearchButtonPress={...}
-                        //onCancelButtonPress={...}
-                        />
-                    </View>
-
-                    <View style={{ marginBottom: height * .25 }}>
-                        <KeyboardAvoidingView>
-                            <ScrollView>
-                                <View style={{ flexDirection: 'row', height: height * .1, alignItems: 'center', justifyContent: 'space-between', marginLeft: width * .05, marginRight: width * .05 }}>
-                                    <Text style={[styles.TitleText, { color: '#343434', fontSize: 20 }]}>Billing Details</Text>
-                                </View>
-                                <View style={{ alignItems: 'center' }}>
-                                    <View style={styles.profileTextInput}>
-                                        <TextInput style={styles.textinputText}
-                                            placeholder={this.state.dataSource.billing.first_name ? this.state.dataSource.billing.first_name : "First Name"}
-                                            keyboardType='email-address'
-                                            returnKeyType={"next"}
-                                            onChangeText={firstName => this.setState({ firstName })}
-                                        />
-                                    </View>
-                                </View>
-                                <View style={{ alignItems: 'center' }}>
-                                    <View style={styles.profileTextInput}>
-                                        <TextInput style={styles.textinputText}
-                                            placeholder={this.state.dataSource.billing.last_name ? this.state.dataSource.billing.last_name : "Last Name"}
-                                            keyboardType='email-address'
-                                            returnKeyType={"next"}
-                                            onChangeText={lastName => this.setState({ lastName })}
-                                        />
-                                    </View>
-                                </View>
-                                <View style={{ alignItems: 'center' }}>
-                                    <View style={styles.profileTextInput}>
-                                        <TextInput style={styles.textinputText}
-                                            placeholder={this.state.dataSource.billing.company ? this.state.dataSource.billing.company : "Company Name"}
-                                            keyboardType='email-address'
-                                            returnKeyType={"next"}
-                                            onChangeText={companyName => this.setState({ companyName })}
-                                        />
-                                    </View>
-                                </View>
-                                <View style={{ alignItems: 'center' }}>
-                                    <View style={styles.profileTextInput}>
-                                        <TextInput style={styles.textinputText}
-                                            placeholder={this.state.dataSource.billing.address_1 ? this.state.dataSource.billing.address_1 : "Address Line 1"}
-                                            keyboardType='email-address'
-                                            returnKeyType={"next"}
-                                            onChangeText={addressLine1 => this.setState({ addressLine1 })}
-                                        />
-                                    </View>
-                                </View>
-                                <View style={{ alignItems: 'center' }}>
-                                    <View style={styles.profileTextInput}>
-                                        <TextInput style={styles.textinputText}
-                                            placeholder={this.state.dataSource.billing.address_2 ? this.state.dataSource.billing.address_2 : "Address Line 2"}
-                                            keyboardType='email-address'
-                                            returnKeyType={"next"}
-                                            onChangeText={addressLine2 => this.setState({ addressLine2 })}
-                                        />
-                                    </View>
-                                </View>
-                                <View style={{ alignItems: 'center' }}>
-                                    <View style={styles.profileTextInput}>
-                                        <TextInput style={styles.textinputText}
-                                            placeholder={this.state.dataSource.billing.city ? this.state.dataSource.billing.city : "City"}
-                                            keyboardType='email-address'
-                                            returnKeyType={"next"}
-                                            onChangeText={cityName => this.setState({ cityName })}
-                                        />
-                                    </View>
-                                </View>
-                                <View style={{ alignItems: 'center' }}>
-                                    <View style={styles.profileTextInput}>
-                                        <TextInput style={styles.textinputText}
-                                            placeholder={this.state.dataSource.billing.state ? this.state.dataSource.billing.state : "State"}
-                                            keyboardType='email-address'
-                                            returnKeyType={"next"}
-                                            onChangeText={stateName => this.setState({ stateName })}
-                                        />
-                                    </View>
-                                </View>
-                                <View style={{ alignItems: 'center' }}>
-                                    <View style={styles.profileTextInput}>
-                                        <TextInput style={styles.textinputText}
-                                            placeholder={this.state.dataSource.billing.country ? this.state.dataSource.billing.country : "Country"}
-                                            keyboardType='email-address'
-                                            returnKeyType={"next"}
-                                            onChangeText={countryName => this.setState({ countryName })}
-                                        />
-                                    </View>
-                                </View>
-                                <View style={{ alignItems: 'center' }}>
-                                    <View style={styles.profileTextInput}>
-                                        <TextInput style={styles.textinputText}
-                                            placeholder={this.state.dataSource.billing.postcode ? this.state.dataSource.billing.postcode : "PostCode"}
-                                            keyboardType='phone-pad'
-                                            maxLength={6}
-                                            returnKeyType={"next"}
-                                            onChangeText={postCode => this.setState({ postCode })}
-                                        />
-                                    </View>
-                                </View>
-                                <View style={{ alignItems: 'center' }}>
-                                    <View style={styles.profileTextInput}>
-                                        <TextInput style={styles.textinputText}
-                                            placeholder={this.state.dataSource.billing.email ? this.state.dataSource.billing.email : "Email Id"}
-                                            keyboardType='email-address'
-                                            returnKeyType={"next"}
-                                            onChangeText={emailId => this.setState({ emailId })}
-                                        />
-                                    </View>
-                                </View>
-                                <View style={{ alignItems: 'center' }}>
-                                    <View style={styles.profileTextInput}>
-                                        <TextInput style={styles.textinputText}
-                                            placeholder={this.state.dataSource.billing.phone ? this.state.dataSource.billing.phone : "Phone Number"}
-                                            keyboardType='phone-pad'
-                                            maxLength={10}
-                                            returnKeyType={"next"}
-                                            onChangeText={phoneNumber => this.setState({ phoneNumber })}
-                                        />
-                                    </View>
-
-
-                                </View>
-                                <View style={{ alignItems: 'center' }}>
-                                    <View style={styles.profileTextInput}>
-                                        <CheckBox
-                                            checked={this.state.checked}
-                                            title='Ship to billing address'
-                                            onPress={() => this.setState({ checked: !this.state.checked })}
-                                        />
-                                    </View>
-                                </View>
-                                {this.state.checked ?
-                                    null
-                                    :
-                                    <View>
-                                        <View style={{ flexDirection: 'row', height: height * .1, alignItems: 'center', justifyContent: 'space-between', marginLeft: width * .05, marginRight: width * .05 }}>
-                                            <Text style={[styles.TitleText, { color: '#343434', fontSize: 20 }]}>Shipping Details</Text>
-                                        </View>
-                                        <View style={{ alignItems: 'center' }}>
-                                            <View style={styles.profileTextInput}>
-                                                <TextInput style={styles.textinputText}
-                                                    placeholder={this.state.dataSource.shipping.first_name ? this.state.dataSource.shipping.first_name : "First Name"}
-                                                    keyboardType='email-address'
-                                                    returnKeyType={"next"}
-                                                    onChangeText={shippingfirstName => this.setState({ shippingfirstName })}
-                                                />
-                                            </View>
-                                        </View>
-                                        <View style={{ alignItems: 'center' }}>
-                                            <View style={styles.profileTextInput}>
-                                                <TextInput style={styles.textinputText}
-                                                    placeholder={this.state.dataSource.shipping.last_name ? this.state.dataSource.shipping.last_name : "Last Name"}
-                                                    keyboardType='email-address'
-                                                    returnKeyType={"next"}
-                                                    onChangeText={shippinglastName => this.setState({ shippinglastName })}
-                                                />
-                                            </View>
-                                        </View>
-                                        <View style={{ alignItems: 'center' }}>
-                                            <View style={styles.profileTextInput}>
-                                                <TextInput style={styles.textinputText}
-                                                    placeholder={this.state.dataSource.shipping.company ? this.state.dataSource.shipping.company : "Company Name (optional)"}
-                                                    keyboardType='email-address'
-                                                    returnKeyType={"next"}
-                                                    onChangeText={shippingcompanyName => this.setState({ shippingcompanyName })}
-                                                />
-                                            </View>
-                                        </View>
-                                        <View style={{ alignItems: 'center' }}>
-                                            <View style={styles.profileTextInput}>
-                                                <TextInput style={styles.textinputText}
-                                                    placeholder={this.state.dataSource.shipping.address_1 ? this.state.dataSource.shipping.address_1 : "Address Line 1"}
-                                                    keyboardType='email-address'
-                                                    returnKeyType={"next"}
-                                                    onChangeText={shippingaddressLine1 => this.setState({ shippingaddressLine1 })}
-                                                />
-                                            </View>
-                                        </View>
-                                        <View style={{ alignItems: 'center' }}>
-                                            <View style={styles.profileTextInput}>
-                                                <TextInput style={styles.textinputText}
-                                                    placeholder={this.state.dataSource.shipping.address_2 ? this.state.dataSource.shipping.address_2 : "Address Line 2"}
-                                                    keyboardType='email-address'
-                                                    returnKeyType={"next"}
-                                                    onChangeText={shippingaddressLine2 => this.setState({ shippingaddressLine2 })}
-                                                />
-                                            </View>
-                                        </View>
-                                        <View style={{ alignItems: 'center' }}>
-                                            <View style={styles.profileTextInput}>
-                                                <TextInput style={styles.textinputText}
-                                                    placeholder={this.state.dataSource.shipping.city ? this.state.dataSource.shipping.city : "City"}
-                                                    keyboardType='email-address'
-                                                    returnKeyType={"next"}
-                                                    onChangeText={shippingcityName => this.setState({ shippingcityName })}
-                                                />
-                                            </View>
-                                        </View>
-                                        <View style={{ alignItems: 'center' }}>
-                                            <View style={styles.profileTextInput}>
-                                                <TextInput style={styles.textinputText}
-                                                    placeholder={this.state.dataSource.shipping.state ? this.state.dataSource.shipping.state : "State"}
-                                                    keyboardType='email-address'
-                                                    returnKeyType={"next"}
-                                                    onChangeText={shippingstateName => this.setState({ shippingstateName })}
-                                                />
-                                            </View>
-                                        </View>
-                                        <View style={{ alignItems: 'center' }}>
-                                            <View style={styles.profileTextInput}>
-                                                <TextInput style={styles.textinputText}
-                                                    placeholder={this.state.dataSource.shipping.country ? this.state.dataSource.shipping.country : "Country"}
-                                                    keyboardType='email-address'
-                                                    returnKeyType={"next"}
-                                                    onChangeText={shippingcountryName => this.setState({ shippingcountryName })}
-                                                />
-                                            </View>
-                                        </View>
-                                        <View style={{ alignItems: 'center' }}>
-                                            <View style={styles.profileTextInput}>
-                                                <TextInput style={styles.textinputText}
-                                                    placeholder={this.state.dataSource.shipping.postcode ? this.state.dataSource.shipping.postcode : "PostCode"}
-                                                    keyboardType='phone-pad'
-                                                    maxLength={6}
-                                                    returnKeyType={"next"}
-                                                    onChangeText={shippingpostCode => this.setState({ shippingpostCode })}
-                                                />
-                                            </View>
-                                        </View>
-                                    </View>
-
-                                }
-
-
-                                <View style={{ alignItems: 'center', paddingBottom: height * .025 }}>
-                                    <TouchableOpacity
-                                        onPress={() => { this.upadateAddress() }}
-                                        style={{ width: width * .9, marginTop: width * .05, alignItems: 'center', justifyContent: 'center', backgroundColor: '#343434', height: height * 0.08, borderRadius: 3 }}>
-                                        <Text style={[styles.TextiputHeader, { color: 'rgba(255,255,255,1)' }]}>SUBMIT</Text>
-                                    </TouchableOpacity>
-                                </View>
-                            </ScrollView>
-                        </KeyboardAvoidingView>
-                    </View>
+                    <TouchableOpacity onPress={() => this.props.navigation.navigate('CartPage')}>
+                        <Icon name='cart' size={40} type='material-community' color='#343434' />
+                    </TouchableOpacity>
                 </View>
-            );
-        }
+
+                <View style={{ marginBottom: height * .25, height: '100%', backgroundColor: '#FFF' }}>
+                    <KeyboardAvoidingView>
+                        <ScrollView style={{ backgroundColor: '#FFF' }} showsVerticalScrollIndicator={false}>
+                            <View style={{ flexDirection: 'row', height: height * .1, alignItems: 'center', justifyContent: 'space-between', marginLeft: width * .05, marginRight: width * .05 }}>
+                                <Text style={[styles.TitleText, { color: '#343434', fontSize: 20 }]}>Billing Details</Text>
+                            </View>
+                            <View style={{ alignItems: 'center' }}>
+                                <View style={styles.profileTextInput}>
+                                    <TextInput style={styles.textinputText}
+                                        placeholder="First name"
+                                        // placeholder={this.state.dataSource.billing.first_name ? this.state.dataSource.billing.first_name : "First Name"}
+                                        keyboardType='email-address'
+                                        returnKeyType={"next"}
+                                        onChangeText={firstName => this.setState({ firstName })}
+                                    />
+                                </View>
+                            </View>
+                            <View style={{ alignItems: 'center' }}>
+                                <View style={styles.profileTextInput}>
+                                    <TextInput style={styles.textinputText}
+                                        placeholder="Last name"
+                                        // placeholder={this.state.dataSource.billing.last_name ? this.state.dataSource.billing.last_name : "Last Name"}
+                                        keyboardType='email-address'
+                                        returnKeyType={"next"}
+                                        onChangeText={lastName => this.setState({ lastName })}
+                                    />
+                                </View>
+                            </View>
+                            <View style={{ alignItems: 'center' }}>
+                                <View style={styles.profileTextInput}>
+                                    <TextInput style={styles.textinputText}
+                                        placeholder="Company name"
+                                        // placeholder={this.state.dataSource.billing.company ? this.state.dataSource.billing.company : "Company Name"}
+                                        keyboardType='email-address'
+                                        returnKeyType={"next"}
+                                        onChangeText={companyName => this.setState({ companyName })}
+                                    />
+                                </View>
+                            </View>
+                            <View style={{ alignItems: 'center' }}>
+                                <View style={styles.profileTextInput}>
+                                    <TextInput style={styles.textinputText}
+                                        placeholder="Address Line 1"
+                                        // placeholder={this.state.dataSource.billing.address_1 ? this.state.dataSource.billing.address_1 : "Address Line 1"}
+                                        keyboardType='email-address'
+                                        returnKeyType={"next"}
+                                        onChangeText={addressLine1 => this.setState({ addressLine1 })}
+                                    />
+                                </View>
+                            </View>
+                            <View style={{ alignItems: 'center' }}>
+                                <View style={styles.profileTextInput}>
+                                    <TextInput style={styles.textinputText}
+                                        placeholder="Address Line 2"
+                                        // placeholder={this.state.dataSource.billing.address_2 ? this.state.dataSource.billing.address_2 : "Address Line 2"}
+                                        keyboardType='email-address'
+                                        returnKeyType={"next"}
+                                        onChangeText={addressLine2 => this.setState({ addressLine2 })}
+                                    />
+                                </View>
+                            </View>
+                            <View style={{ alignItems: 'center' }}>
+                                <View style={styles.profileTextInput}>
+                                    <TextInput style={styles.textinputText}
+                                        placeholder="City"
+                                        // placeholder={this.state.dataSource.billing.city ? this.state.dataSource.billing.city : "City"}
+                                        keyboardType='email-address'
+                                        returnKeyType={"next"}
+                                        onChangeText={cityName => this.setState({ cityName })}
+                                    />
+                                </View>
+                            </View>
+                            <View style={{ alignItems: 'center' }}>
+                                <View style={styles.profileTextInput}>
+                                    <TextInput style={styles.textinputText}
+                                        placeholder="State"
+                                        // placeholder={this.state.dataSource.billing.state ? this.state.dataSource.billing.state : "State"}
+                                        keyboardType='email-address'
+                                        returnKeyType={"next"}
+                                        onChangeText={stateName => this.setState({ stateName })}
+                                    />
+                                </View>
+                            </View>
+                            <View style={{ alignItems: 'center' }}>
+                                <View style={styles.profileTextInput}>
+                                    <TextInput style={styles.textinputText}
+                                        placeholder="Country"
+                                        // placeholder={this.state.dataSource.billing.country ? this.state.dataSource.billing.country : "Country"}
+                                        keyboardType='email-address'
+                                        returnKeyType={"next"}
+                                        onChangeText={countryName => this.setState({ countryName })}
+                                    />
+                                </View>
+                            </View>
+                            <View style={{ alignItems: 'center' }}>
+                                <View style={styles.profileTextInput}>
+                                    <TextInput style={styles.textinputText}
+                                        placeholder="PostCode"
+                                        // placeholder={this.state.dataSource.billing.postcode ? this.state.dataSource.billing.postcode : "PostCode"}
+                                        keyboardType='phone-pad'
+                                        maxLength={6}
+                                        returnKeyType={"next"}
+                                        onChangeText={postCode => this.setState({ postCode })}
+                                    />
+                                </View>
+                            </View>
+                            <View style={{ alignItems: 'center' }}>
+                                <View style={styles.profileTextInput}>
+                                    <TextInput style={styles.textinputText}
+                                        placeholder="Email Id"
+                                        // placeholder={this.state.dataSource.billing.email ? this.state.dataSource.billing.email : "Email Id"}
+                                        keyboardType='email-address'
+                                        returnKeyType={"next"}
+                                        onChangeText={emailId => this.setState({ emailId })}
+                                    />
+                                </View>
+                            </View>
+                            <View style={{ alignItems: 'center' }}>
+                                <View style={styles.profileTextInput}>
+                                    <TextInput style={styles.textinputText}
+                                        placeholder="Phone Number"
+                                        // placeholder={this.state.dataSource.billing.phone ? this.state.dataSource.billing.phone : "Phone Number"}
+                                        keyboardType='phone-pad'
+                                        maxLength={10}
+                                        returnKeyType={"next"}
+                                        onChangeText={phoneNumber => this.setState({ phoneNumber })}
+                                    />
+                                </View>
+
+
+                            </View>
+                            <View style={{ alignItems: 'center' }}>
+                                <View style={styles.profileTextInput}>
+                                    <CheckBox
+                                        checked={this.state.checked}
+                                        title='Ship to billing address'
+                                        onPress={() => { this.setState({ checked: !this.state.checked }) }}
+                                    />
+                                </View>
+                            </View>
+                            {this.state.checked ?
+                                null
+                                :
+                                <View>
+                                    <View style={{ flexDirection: 'row', height: height * .1, alignItems: 'center', justifyContent: 'space-between', marginLeft: width * .05, marginRight: width * .05 }}>
+                                        <Text style={[styles.TitleText, { color: '#343434', fontSize: 20 }]}>Shipping Details</Text>
+                                    </View>
+                                    <View style={{ alignItems: 'center' }}>
+                                        <View style={styles.profileTextInput}>
+                                            <TextInput style={styles.textinputText}
+                                                placeholder="First Name"
+                                                // placeholder={this.state.dataSource.shipping.first_name ? this.state.dataSource.shipping.first_name : "First Name"}
+                                                keyboardType='email-address'
+                                                returnKeyType={"next"}
+                                                onChangeText={shippingfirstName => this.setState({ shippingfirstName })}
+                                            />
+                                        </View>
+                                    </View>
+                                    <View style={{ alignItems: 'center' }}>
+                                        <View style={styles.profileTextInput}>
+                                            <TextInput style={styles.textinputText}
+                                                placeholder="Last Name"
+                                                // placeholder={this.state.dataSource.shipping.last_name ? this.state.dataSource.shipping.last_name : "Last Name"}
+                                                keyboardType='email-address'
+                                                returnKeyType={"next"}
+                                                onChangeText={shippinglastName => this.setState({ shippinglastName })}
+                                            />
+                                        </View>
+                                    </View>
+                                    <View style={{ alignItems: 'center' }}>
+                                        <View style={styles.profileTextInput}>
+                                            <TextInput style={styles.textinputText}
+                                                placeholder="Company Name"
+                                                // placeholder={this.state.dataSource.shipping.company ? this.state.dataSource.shipping.company : "Company Name (optional)"}
+                                                keyboardType='email-address'
+                                                returnKeyType={"next"}
+                                                onChangeText={shippingcompanyName => this.setState({ shippingcompanyName })}
+                                            />
+                                        </View>
+                                    </View>
+                                    <View style={{ alignItems: 'center' }}>
+                                        <View style={styles.profileTextInput}>
+                                            <TextInput style={styles.textinputText}
+                                                placeholder="Address Line 1"
+                                                // placeholder={this.state.dataSource.shipping.address_1 ? this.state.dataSource.shipping.address_1 : "Address Line 1"}
+                                                keyboardType='email-address'
+                                                returnKeyType={"next"}
+                                                onChangeText={shippingaddressLine1 => this.setState({ shippingaddressLine1 })}
+                                            />
+                                        </View>
+                                    </View>
+                                    <View style={{ alignItems: 'center' }}>
+                                        <View style={styles.profileTextInput}>
+                                            <TextInput style={styles.textinputText}
+                                                placeholder="Address Line 2"
+                                                // placeholder={this.state.dataSource.shipping.address_2 ? this.state.dataSource.shipping.address_2 : "Address Line 2"}
+                                                keyboardType='email-address'
+                                                returnKeyType={"next"}
+                                                onChangeText={shippingaddressLine2 => this.setState({ shippingaddressLine2 })}
+                                            />
+                                        </View>
+                                    </View>
+                                    <View style={{ alignItems: 'center' }}>
+                                        <View style={styles.profileTextInput}>
+                                            <TextInput style={styles.textinputText}
+                                                placeholder="City"
+                                                // placeholder={this.state.dataSource.shipping.city ? this.state.dataSource.shipping.city : "City"}
+                                                keyboardType='email-address'
+                                                returnKeyType={"next"}
+                                                onChangeText={shippingcityName => this.setState({ shippingcityName })}
+                                            />
+                                        </View>
+                                    </View>
+                                    <View style={{ alignItems: 'center' }}>
+                                        <View style={styles.profileTextInput}>
+                                            <TextInput style={styles.textinputText}
+                                                placeholder="State"
+                                                // placeholder={this.state.dataSource.shipping.state ? this.state.dataSource.shipping.state : "State"}
+                                                keyboardType='email-address'
+                                                returnKeyType={"next"}
+                                                onChangeText={shippingstateName => this.setState({ shippingstateName })}
+                                            />
+                                        </View>
+                                    </View>
+                                    <View style={{ alignItems: 'center' }}>
+                                        <View style={styles.profileTextInput}>
+                                            <TextInput style={styles.textinputText}
+                                                placeholder="Country"
+                                                // placeholder={this.state.dataSource.shipping.country ? this.state.dataSource.shipping.country : "Country"}
+                                                keyboardType='email-address'
+                                                returnKeyType={"next"}
+                                                onChangeText={shippingcountryName => this.setState({ shippingcountryName })}
+                                            />
+                                        </View>
+                                    </View>
+                                    <View style={{ alignItems: 'center' }}>
+                                        <View style={styles.profileTextInput}>
+                                            <TextInput style={styles.textinputText}
+                                                placeholder="Postcode"
+                                                // placeholder={this.state.dataSource.shipping.postcode ? this.state.dataSource.shipping.postcode : "PostCode"}
+                                                keyboardType='phone-pad'
+                                                maxLength={6}
+                                                returnKeyType={"next"}
+                                                onChangeText={shippingpostCode => this.setState({ shippingpostCode })}
+                                            />
+                                        </View>
+                                    </View>
+                                </View>
+
+                            }
+
+
+                            <View style={{ alignItems: 'center', paddingBottom: height * .3 }}>
+                                <TouchableOpacity
+                                    onPress={() => { this.upadateAddress() }}
+                                    style={{ width: width * .9, marginTop: width * .05, alignItems: 'center', justifyContent: 'center', backgroundColor: '#f5c711', height: height * 0.08, borderRadius: 3, elevation: 3 }}>
+                                    <Text style={[styles.TextiputHeader, { color: 'rgba(255,255,255,1)' }]}>SUBMIT</Text>
+                                </TouchableOpacity>
+                            </View>
+                        </ScrollView>
+                    </KeyboardAvoidingView>
+                </View>
+            </View>
+        );
     }
 }

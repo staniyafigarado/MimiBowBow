@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text, View, Dimensions, Image, TextInput, ImageBackground, Alert, Keyboard, KeyboardAvoidingView, } from 'react-native';
+import { Text, View, Dimensions, Image, TextInput, ImageBackground, Alert, Keyboard, KeyboardAvoidingView, ToastAndroid } from 'react-native';
 import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
 import { Icon } from 'react-native-elements';
 import { StackActions, NavigationActions } from 'react-navigation';
@@ -29,26 +29,24 @@ export default class App extends React.Component {
                     email: res.data.user_email,
                     // displayname: response.data.user_display_name
                 };
-                alert('Scucessfully signed in with email ' + userDets.email);
+                // alert('Scucessfully signed in with email ' + userDets.email);
+                ToastAndroid.show("Success", ToastAndroid.SHORT);
                 this.props.navigation.navigate("Home");
-                AsyncStorage.setItem('user_id', res.data.user_id);
-                AsyncStorage.setItem('username', res.data.username);
+                // AsyncStorage.setItem('user_id', res.data.user_id);
+                // AsyncStorage.setItem('username', res.data.username);
+                this.saveToStorage(data)
             }).catch(error => {
-                alert("Something went wrong, Check your email and password.")
-                console.log(error)
+                // alert("Something went wrong, Check your email and password.")
+                ToastAndroid.show("Something went wrong, Check your email and password", ToastAndroid.SHORT);
+                console.log(error.message)
             });
     }
 
-    async saveToStorage(userData) {
-        if (userData) {
-            console.log(userData);
-            await AsyncStorage.setItem('user', JSON.stringify({
-                isLoggedIn: true,
-                authToken: userData.auth_token,
-                id: userData.user_id,
-                name: userData.user_login
-            })
-            );
+    async saveToStorage(data) {
+        if (data) {
+            console.log("async", data);
+            await AsyncStorage.setItem('loginDetails', JSON.stringify(data)
+            ); console.log(data)
             return true;
         }
 
@@ -68,7 +66,7 @@ export default class App extends React.Component {
                     <View style={{ height: height * .4, marginLeft: width * .05, paddingTop: height * .1 }}>
                         <Text style={[styles.TitleText, { color: 'rgba(255,255,255,1)' }]} >Sign In</Text>
                     </View>
-                    <View style={{ alignItems: 'center', paddingTop: height * .04 }}>
+                    <View style={{ alignItems: 'center' }}>
                         <View style={styles.textInputLogin}>
                             <TextInput style={styles.textinputText}
                                 placeholder="* Email Address"
@@ -77,7 +75,7 @@ export default class App extends React.Component {
                                 onChangeText={email => this.setState({ email })}
                             />
                         </View>
-                        <View style={[styles.textInputPass, { alignItems: 'center' }]}>
+                        <View style={[styles.textInputPass, { alignItems: 'center', elevation: 3 }]}>
                             <TextInput style={[styles.textinputText, { width: '80%', }]}
                                 placeholder="* Password"
                                 keyboardType="default"
@@ -108,7 +106,7 @@ export default class App extends React.Component {
 
                 </View> */}
                     {/* staniya new view */}
-                    <View style={{ alignItems: 'center', marginTop: height * .05 }}>
+                    <View style={{ alignItems: 'center', marginTop: height * .04 }}>
                         <TouchableOpacity
                             // onPress={() => {
                             //     if (this.state.email && this.state.password) {
@@ -117,26 +115,26 @@ export default class App extends React.Component {
                             //     }
                             // }}
                             onPress={() => this.insertData()}
-                            style={[styles.textInputLogin, { alignItems: 'center', backgroundColor: '#343434', borderWidth: 0 }]}>
+                            style={[styles.textInputLogin, { alignItems: 'center', backgroundColor: '#FDC500', }]}>
                             <Text style={[styles.TextiputHeader, { color: 'rgba(255,255,255,1)' }]} >CONTINUE</Text>
                         </TouchableOpacity>
 
                     </View>
-                    {/* <View style={{ justifyContent: 'center', flexDirection: 'row' }}>
-                    <TouchableOpacity
-                        onPress={() => {
-                            this.loginWithFacebook(navigate);
-                            // this.props.navigation.navigate('Home')
-                        }}
-                        style={{ margin: 20, width: width * 0.15, height: width * 0.15, borderWidth: 1, borderColor: '#343434', borderRadius: width * .075, alignItems: 'center', justifyContent: 'center' }}>
-                        <Icon name='facebook' size={30} type='fontisto' color='#343434'
-                        // onPress={() => loginWithFacebook()} 
-                        />
-                    </TouchableOpacity>
-                    <View style={{ margin: 20, width: width * 0.15, height: width * 0.15, borderWidth: 1, borderColor: '#343434', borderRadius: width * .075, alignItems: 'center', justifyContent: 'center' }}>
-                        <Icon name='google-plus' size={40} type='material-community' color='#343434' />
+                    <View style={{ justifyContent: 'center', flexDirection: 'row' }}>
+                        <TouchableOpacity
+                            // onPress={() => {
+                            //     this.loginWithFacebook(navigate);
+                            //     // this.props.navigation.navigate('Home')
+                            // }}
+                            style={{ margin: 20, width: width * 0.15, height: width * 0.15, borderWidth: 1, borderColor: '#343434', borderRadius: width * .075, alignItems: 'center', justifyContent: 'center' }}>
+                            <Icon name='facebook' size={30} type='fontisto' color='#343434'
+                            // onPress={() => loginWithFacebook()} 
+                            />
+                        </TouchableOpacity>
+                        <View style={{ margin: 20, width: width * 0.15, height: width * 0.15, borderWidth: 1, borderColor: '#343434', borderRadius: width * .075, alignItems: 'center', justifyContent: 'center' }}>
+                            <Icon name='google-plus' size={40} type='material-community' color='#343434' />
+                        </View>
                     </View>
-                </View> */}
                 </ImageBackground>
             </ScrollView>
         );

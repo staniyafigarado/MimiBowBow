@@ -2,14 +2,26 @@ import React from 'react';
 import { Text, View, Dimensions, Image, FlatList } from 'react-native';
 import SearchBar from 'react-native-search-bar';
 import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
-import { Icon } from 'react-native-elements';
+import { Icon, Badge } from 'react-native-elements';
 import styles from '../styles/styles';
 // import Apps from '../App';
 const DataArray = require("../screens/categoryData.json");
 const { width, height } = Dimensions.get('window')
 
 export default class App extends React.Component {
-
+	constructor(props) {
+		super(props);
+		this.state = {
+			isLoading: true,
+			cartCount: 0
+		};
+	}
+	async componentDidMount() {
+		const existingCart = await AsyncStorage.getItem('cart');
+		this.setState({
+			cartCount: JSON.parse(existingCart).length
+		});
+	}
 	render() {
 		return (
 			<View style={{ flex: 1, backgroundColor: '#f5c711' }}>
@@ -26,10 +38,15 @@ export default class App extends React.Component {
 					</Text>
 					<TouchableOpacity onPress={() => this.props.navigation.navigate('CartPage')}>
 						<Icon name='cart' size={40} type='material-community' color='#343434' />
+						{this.state.cartCount != 0 ?
+							/* {this.state.cartCount = 0 ? */
+							<Badge value={this.state.cartCount} status="error" containerStyle={{ position: 'absolute', top: -1, right: -1 }} />
+							: null
+						}
 					</TouchableOpacity>
 				</View>
 				<ScrollView showsVerticalScrollIndicator={false}>
-					<View style={{ paddingLeft: 4 }}>
+					<View style={{ paddingLeft: 4, backgroundColor: '#FFF' }}>
 						<FlatList
 							numColumns={2}
 							keyExtractor={(item, index) => index}

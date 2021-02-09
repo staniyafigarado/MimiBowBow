@@ -2,7 +2,7 @@ import React from 'react';
 import { Text, View, Dimensions, Image, BackHandler, FlatList } from 'react-native';
 import SearchBar from 'react-native-search-bar';
 import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
-import { Icon } from 'react-native-elements';
+import { Icon, Badge } from 'react-native-elements';
 //import { Rating, AirbnbRating } from 'react-native-ratings';
 import { Rating, AirbnbRating } from 'react-native-elements';
 import styles from '../styles/styles';
@@ -32,10 +32,10 @@ export default class App extends React.Component {
             isLoading: true,
             gridView: true,
             selectedCategory: '',
-            dataSource: [],
+            dataSource: [], cartCount: 0
         };
     }
-    componentDidMount() {
+    async componentDidMount() {
         const { navigation } = this.props;
         const oderId = navigation.getParam('orderId', 'Null');
         console.log(oderId)
@@ -47,14 +47,18 @@ export default class App extends React.Component {
         }).catch(error => {
             console.log(error + "123");
         });
+        const existingCart = await AsyncStorage.getItem('cart');
+        this.setState({
+            cartCount: JSON.parse(existingCart).length
+        });
     }
     render() {
         if (this.state.isLoading) {
             return (
-                <View style={{ flex: 1, backgroundColor: '#f5c711' }}>
+                <View style={{ flex: 1, backgroundColor: '#FFF' }}>
                     <PacmanIndicator
                         count={5}
-                        color='black'
+                        color='#343434'
                         animationDuration={600}
                         size={100}
                     />
@@ -78,6 +82,11 @@ export default class App extends React.Component {
                     </Text>
                     <TouchableOpacity onPress={() => this.props.navigation.navigate('CartPage')}>
                         <Icon name='cart' size={40} type='material-community' color='#343434' />
+                        {this.state.cartCount != 0 ?
+                            /* {this.state.cartCount = 0 ? */
+                            <Badge value={this.state.cartCount} status="error" containerStyle={{ position: 'absolute', top: -1, right: -1 }} />
+                            : null
+                        }
                     </TouchableOpacity>
                 </View>
                 <View style={[styles.textInput, { marginLeft: width * .05, borderWidth: 0, marginBottom: 3, elevation: 5 }]}>
@@ -89,12 +98,13 @@ export default class App extends React.Component {
                     //onCancelButtonPress={...}
                     />
                 </View>
-                <View style={{ flexDirection: 'row', height: height * .1, alignItems: 'center', justifyContent: 'space-between', marginLeft: width * .05, marginRight: width * .05 }}>
-                    <Text style={[styles.TitleText, { color: '#343434', fontSize: 20 }]}>My Orders</Text>
+                <ScrollView showsVerticalScrollIndicator={false} style={{ backgroundColor: '#FFF', height: '100%', marginBottom: height * 0.1 }}>
+                    <View style={{ flexDirection: 'row', height: height * .1, alignItems: 'center', justifyContent: 'space-between', marginLeft: width * .05, marginRight: width * .05 }}>
+                        <Text style={[styles.TitleText, { color: '#343434', fontSize: 20 }]}>My Orders</Text>
 
-                </View>
-                <ScrollView>
-                    <View style={{ flexDirection: 'row', width: width * .90, height: height * .17, backgroundColor: 'white', marginLeft: width * .05, marginRight: width * .05, borderRadius: 5 }}>
+                    </View>
+
+                    <View style={{ flexDirection: 'row', width: width * .90, height: height * .17, backgroundColor: 'white', marginLeft: width * .05, marginRight: width * .05, borderRadius: 5, elevation: 3 }}>
                         <Image
                             source={require('../assets/images/kitty.png')}
                             style={{ width: height * .14, height: height * .14, margin: height * .015 }}

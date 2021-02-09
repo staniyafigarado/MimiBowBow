@@ -6,7 +6,7 @@ const { width, height } = Dimensions.get('window')
 
 const styles = StyleSheet.create({
     TitleText: {
-        fontSize: 30,
+        fontSize: 24,
         fontFamily: 'Montserrat-Bold',
         color: '#343434'
     },
@@ -44,19 +44,16 @@ const styles = StyleSheet.create({
         height: height * 0.08,
         backgroundColor: 'rgba(255,255,255,1)',
         borderRadius: 5,
-        borderColor: 'rgba(0,0,0,0.2)',
         marginBottom: height * .015,
-        borderWidth: 1,
-        justifyContent: 'center'
+        justifyContent: 'center', elevation: 3
     },
     textInputLogin: {
         width: width * .9,
         height: height * 0.09,
         backgroundColor: 'rgba(255,255,255,1)',
         borderRadius: width * .45,
-        borderColor: 'rgba(0,0,0,0.2)',
         marginBottom: height * .035,
-        justifyContent: 'center',
+        justifyContent: 'center', elevation: 3
     },
     textInputPass: {
         width: width * .9,
@@ -71,7 +68,7 @@ const styles = StyleSheet.create({
         fontSize: 20,
         fontFamily: 'Montserrat-Regular',
         color: '#545454',
-        marginLeft: width * .05
+        marginLeft: width * .05, marginTop: 5
     },
     categoryView: {
         width: width * .45,
@@ -79,7 +76,7 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         backgroundColor: 'rgba(255,255,255,1)',
         alignItems: 'center',
-        padding: 10
+        padding: 10, elevation: 5,
     },
     categoryImage: {
         width: width * .35,
@@ -100,7 +97,7 @@ const styles = StyleSheet.create({
         backgroundColor: 'rgba(255,255,255,1)',
         alignItems: 'center',
         justifyContent: 'center',
-        elevation: 5,
+        elevation: 5, borderColor: '#D1D1D1', borderLeftWidth: 0.5, borderRightWidth: 0.5
     },
     homeCategoryViewSmall: {
         width: width * .13,
@@ -115,13 +112,13 @@ const styles = StyleSheet.create({
         fontSize: 11,
         fontFamily: 'Montserrat-Medium',
         color: '#545454',
-        marginLeft: width * .05
+        marginTop: 7
     },
     homeCategoryImageSmall: {
         width: width * .09,
         height: width * .09,
         borderRadius: 10,
-        resizeMode: 'stretch'
+        resizeMode: 'center', alignItems: 'center', justifyContent: 'center'
     },
     reviewBtn: {
         flexDirection: 'row',
@@ -133,7 +130,6 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         alignItems: 'center',
         justifyContent: 'center',
-        borderWidth: .05,
         elevation: 3
     }
 })

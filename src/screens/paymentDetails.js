@@ -1,12 +1,13 @@
 import React from 'react';
-import { Text, View, Dimensions, Image, Alert, FlatList, TextInput } from 'react-native';
-import { RadioButton } from 'react-native-paper';
+import { Text, View, Dimensions, Image, ToastAndroid } from 'react-native';
 import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
-import { Icon } from 'react-native-elements';
+import { Icon, Badge } from 'react-native-elements';
 import { Rating, AirbnbRating } from 'react-native-ratings';
 import styles from '../styles/styles';
 import WooCommerce from '../utils/wooApi';
-import AsyncStorage from '@react-native-community/async-storage'
+import AsyncStorage from '@react-native-community/async-storage';
+import RazorpayCheckout from 'react-native-razorpay';
+import RadioButton from '../sharedComponents/CustomRadioButton';
 import {
     BallIndicator,
     BarIndicator,
@@ -27,15 +28,52 @@ export default class App extends React.Component {
         this.state = {
             isLoading: true,
             cartAmount: 0,
-            value: 0,
+            value: 0, cartCount: 0, loginData: [],
+            radioItems:
+                [
+                    {
+                        label: 'Cash On Delivery',
+                        size: 20,
+                        color: '#0182C3',
+                        selected: true
+                    },
+
+                    {
+                        label: 'Razor Pay',
+                        color: '#0182C3',
+                        size: 20,
+                        selected: false,
+                    },
+
+                    {
+                        label: 'Paypal Payment',
+                        size: 20,
+                        color: '#0182C3',
+                        selected: false
+                    },
+                ], selectedItem: ''
         };
     }
     componentDidMount = async () => {
+        try {
+            let data = await AsyncStorage.getItem('loginDetails');
+            console.log('Data 100', data);
+            if (data !== null) {
+                this.setState({ loginData: JSON.parse(data) });
+            }
+        } catch (error) {
+            console.log('Something went wrong', error);
+        }
         const totalAmount = await AsyncStorage.getItem('totalAmount')
         const userData = (JSON.parse(await AsyncStorage.getItem('userData')));
         this.setState({
             cartAmount: totalAmount,
             isLoading: false,
+        });
+        this.state.radioItems.map((item) => {
+            if (item.selected == true) {
+                this.setState({ selectedItem: item.label });
+            }
         });
         WooCommerce.get('payment_gateways').then(response => {
             this.setState({
@@ -52,7 +90,24 @@ export default class App extends React.Component {
         }).catch(error => {
             console.log(error + "123");
         });
+        const existingCart = await AsyncStorage.getItem('cart');
+        this.setState({
+            cartCount: JSON.parse(existingCart).length
+        });
     }
+
+    changeActiveRadioButton(index) {
+        this.state.radioItems.map((item) => {
+            item.selected = false;
+        });
+
+        this.state.radioItems[index].selected = true;
+
+        this.setState({ radioItems: this.state.radioItems }, () => {
+            this.setState({ selectedItem: this.state.radioItems[index].label });
+        });
+    }
+
     updateOrder = async (orderId) => {
 
         const existingCart = await AsyncStorage.getItem('cart')
@@ -151,7 +206,38 @@ export default class App extends React.Component {
     //       items:  this.state.items
     //     });
     // }
-
+    handlePayment() {
+        var value = this.state.cartAmount
+        value = Number(value).toFixed(2);
+        console.log(value)
+        this.setState({ cartAmount: value });
+        var options = {
+            description: 'MimiBowBow',
+            image: 'https://i.imgur.com/3g7nmJC.png',
+            currency: 'INR',
+            key: 'rzp_test_mEZUIlmpj11S15',
+            amount: this.state.cartAmount,
+            name: 'Mimi and Bow',
+            // order_id: 'order_DslnoIgkIDL8Zt',//Replace this with an order_id created using Orders API. Learn more at https://razorpay.com/docs/api/orders.
+            prefill: {
+                email: this.state.loginData.user_email,
+                contact: '9656039412',
+                name: this.state.loginData.user_display_name
+            },
+            theme: { color: '#f5c711' }
+        }
+        RazorpayCheckout.open(options).then((data) => {
+            // handle success
+            // alert(`Success: ${data.razorpay_payment_id}`);
+            console.log(data)
+            this.props.navigation.navigate("OrderSuccess")
+        }).catch((error) => {
+            // handle failure
+            console.log(error)
+            // alert(`Error: ${error.code} | ${error.description}`);
+            ToastAndroid.show("Payment Cancelled", ToastAndroid.SHORT);
+        });
+    }
 
     orderPlacing = async () => {
         console.log("Hi")
@@ -168,7 +254,7 @@ export default class App extends React.Component {
         });
         for (let i = 0; i < arrayLength; i++) {
             WooCommerce.post('orders', {
-                customer_id: userData.id,
+                customer_id: this.state.loginData.user_id,
                 payment_method: "cod",
                 payment_method_title: "Cash on delivery",
                 set_paid: true,
@@ -199,7 +285,7 @@ export default class App extends React.Component {
                     product_id: this.state.cartProductData[i].id,
                     quantity: this.state.cartProductQnty[i],
                     meta_data: [{
-                        value: "2020-09-07"
+                        value: "2021-09-07"
                     }]
                 }]
             }).then(response => {
@@ -227,33 +313,75 @@ export default class App extends React.Component {
                     <Text style={{ fontFamily: 'Montserrat-Regular', fontSize: 17 }}>
                         Mimi and Bow Bow
 					</Text>
-                    <Icon name='cart' size={40} type='material-community' color='#343434' />
+                    <TouchableOpacity onPress={() => this.props.navigation.navigate('CartPage')}>
+                        <Icon name='cart' size={40} type='material-community' color='#343434' />
+                        {this.state.cartCount != 0 ?
+                            /* {this.state.cartCount = 0 ? */
+                            <Badge value={this.state.cartCount} status="error" containerStyle={{ position: 'absolute', top: -1, right: -1 }} />
+                            : null
+                        }
+                    </TouchableOpacity>
                 </View>
-                <View style={{ flexDirection: 'row', height: height * .1, alignItems: 'center', justifyContent: 'space-between', marginLeft: width * .05, marginRight: width * .05 }}>
-                    <Text style={[styles.TitleText, { fontFamily: 'Montserrat-SemiBold', fontSize: 20 }]}>Payment</Text>
-                    <Text style={[styles.TitleText, { fontFamily: 'Montserrat-SemiBold', fontSize: 20 }]}>₹ {this.state.cartAmount} </Text>
+                <ScrollView>
+                    <View style={{ flex: 1, backgroundColor: '#FFF', height: height * 1 }}>
+                        <View style={{ flexDirection: 'row', height: height * .1, alignItems: 'center', backgroundColor: '#FFF' }}>
+                            <Text style={[styles.TitleText, { fontFamily: 'Montserrat-SemiBold', fontSize: 20, marginLeft: 10 }]}>Payment</Text>
+                            <Text style={[styles.TitleText, { fontFamily: 'Montserrat-SemiBold', fontSize: 20 }]}>₹ {this.state.cartAmount} </Text>
 
-                </View>
-                <View style={[styles.textInput, { marginLeft: width * .05, height: null, padding: width * .025 }]}>
-                    <RadioButton.Group onValueChange={value => this.setState({ value: this.state.value })}>
-                        <FlatList
-                            keyExtractor={(item, index) => index}
-                            data={this.state.paymentData}
-                            renderItem={({ item, index }) => (
+                        </View>
+                        <View style={{ width: width * 1 }}>
+                            {
+                                this.state.radioItems.map((item, key) =>
+                                (
+                                    <RadioButton key={key} button={item} onClick={this.changeActiveRadioButton.bind(this, key)} />
+                                ))
+                            }
+                            <View>
+                                {/* <Text style={styles.selectedText}>Selected Item: {this.state.selectedItem}</Text> */}
+                            </View>
+                        </View>
+                        <View style={{ alignItems: 'center', paddingBottom: height * .025, marginBottom: 50, backgroundColor: '#FFF' }}>
+                            {
+                                this.state.selectedItem == 'Razor Pay' ? (
+                                    <TouchableOpacity
+                                        onPress={() => { this.handlePayment() }}
+                                        style={{ width: width * .9, marginTop: width * .05, alignItems: 'center', justifyContent: 'center', backgroundColor: '#FDC500', height: height * 0.08, borderRadius: 3, elevation: 3 }}>
+                                        <Text style={[styles.TextiputHeader, { color: 'rgba(255,255,255,1)' }]}>CONTINUE</Text>
+                                    </TouchableOpacity>
+                                ) : null
+                            }
 
-                                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                    <RadioButton value={index} />
-                                    <Text style={[styles.textinputText, { fontSize: 15 }]}>{item.title}</Text>
+                        </View>
+                    </View>
+                    {/* <View style={[styles.textInput, { height: null, padding: width * .025, width: '100%' }]}>
+                        <RadioButton.Group onValueChange={value => this.setState({ value: this.state.value })}>
+                            <FlatList
+                                keyExtractor={(item, index) => index}
+                                data={this.state.paymentData}
+                                renderItem={({ item, index }) => (
 
-                                </View>
+                                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                        <RadioButton value={index} />
+                                        <Text style={[styles.textinputText, { fontSize: 15 }]}>{item.title}</Text>
+
+                                    </View>
 
 
-                            )}
-                        />
-                    </RadioButton.Group>
-                </View>
+                                )}
+                            />
+                        </RadioButton.Group>
+                    </View> */}
+                    {/* <View style={{ height: '100%', flex: 1 }}>
+                        <View style={{ alignItems: 'center', paddingBottom: height * .025, marginBottom: 50, backgroundColor: '#FFF' }}>
+                            <TouchableOpacity
+                                onPress={() => { this.handlePayment() }}
+                                style={{ width: width * .9, marginTop: width * .05, alignItems: 'center', justifyContent: 'center', backgroundColor: '#FDC500', height: height * 0.08, borderRadius: 3, elevation: 3 }}>
+                                <Text style={[styles.TextiputHeader, { color: 'rgba(255,255,255,1)' }]}>CONTINUE</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View> */}
 
-                {/* <RadioButton.Group onValueChange={value => this.setState({value: this.state.value})}>
+                    {/* <RadioButton.Group onValueChange={value => this.setState({value: this.state.value})}>
                     <View>
                         <Text>First</Text>
                         <RadioButton value="0" />
@@ -263,13 +391,8 @@ export default class App extends React.Component {
                         <RadioButton value="0" />
                     </View>
                 </RadioButton.Group> */}
-                <View style={{ alignItems: 'center', paddingBottom: height * .025 }}>
-                    <TouchableOpacity
-                        onPress={() => { this.orderPlacing() }}
-                        style={{ width: width * .9, marginTop: width * .05, alignItems: 'center', justifyContent: 'center', backgroundColor: '#343434', height: height * 0.08, borderRadius: 3 }}>
-                        <Text style={[styles.TextiputHeader, { color: 'rgba(255,255,255,1)' }]}>CONTINUE</Text>
-                    </TouchableOpacity>
-                </View>
+
+                </ScrollView>
             </View>
 
         );

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text, View, Dimensions, Image, TextInput } from 'react-native';
+import { Text, View, Dimensions, Image, TextInput, StatusBar } from 'react-native';
 import SearchBar from 'react-native-search-bar';
 import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
 import { Icon } from 'react-native-elements';
@@ -24,8 +24,9 @@ export default class App extends React.Component {
     }
     render() {
         return (
-            <View style={{ flex: 1, backgroundColor: '#f5c711' }}>
-                <View style={{ flexDirection: 'row', height: height * .1, alignItems: 'center', justifyContent: 'space-between', margin: width * .05 }}>
+            <View style={{ flex: 1, backgroundColor: '#FFF' }}>
+                <StatusBar barStyle="dark-content" hidden={true} backgroundColor="#FDC500" translucent={true} />
+                <View style={{ flexDirection: 'row', height: height * .15, alignItems: 'center', justifyContent: 'space-between', backgroundColor: '#FDC500', width: '100%', padding: width * 0.06 }}>
                     <TouchableOpacity
                         onPress={() => { this.props.navigation.toggleDrawer(); }}
                     >
@@ -40,24 +41,24 @@ export default class App extends React.Component {
 					</Text>
                     <Icon name='cart' size={40} type='material-community' color='#343434' />
                 </View>
-                <View style={{ flexDirection: 'row', height: height * .35, alignItems: 'flex-end', justifyContent: 'center', paddingBottom: height * 0.05 }}>
+                <View style={{ flexDirection: 'row', height: height * .43, alignItems: 'flex-end', justifyContent: 'center', backgroundColor: '#FFF', }}>
                     <Image
                         source={require('../assets/images/doctor.png')}
-                        style={{ height: height * .3, width: width * 0.2, resizeMode: 'stretch' }}
+                        style={{ height: height * .4, width: width * 0.55, resizeMode: 'stretch', justifyContent: 'center', alignItems: 'center' }}
                     />
-                    <Image
+                    {/* <Image
                         source={require('../assets/images/dog2.png')}
                         style={{ height: width * 0.2, width: width * 0.3, resizeMode: 'stretch' }}
-                    />
+                    /> */}
 
                 </View>
                 <View style={{ alignItems: 'center' }}>
-                    <Text style={[styles.TitleText, { color: 'rgba(255,255,255,1)' }]}>Appoinment Fixed</Text>
-                    <Text style={[styles.TitleText, { color: 'rgba(255,255,255,1)' }]}> 26 August 2020 </Text>
-                    <Text style={[styles.TitleText, { color: 'rgba(255,255,255,1)', fontSize: 25 }]}> 11.00 am </Text>
+                    <Text style={[styles.TitleText, { color: '#343434' }]}>Appoinment Fixed</Text>
+                    <Text style={[styles.TitleText, { color: '#343434' }]}> 26 August 2020 </Text>
+                    <Text style={[styles.TitleText, { color: '#343434', fontSize: 25 }]}> 11.00 am </Text>
                 </View>
-                <View style={{ alignItems: 'center', marginTop: height * .1 }}>
-                    <TouchableOpacity onPress={() => this.props.navigation.navigate('Home')} style={[styles.textInput, { alignItems: 'center', borderWidth: 0, backgroundColor: '#343434' }]}>
+                <View style={{ alignItems: 'center', marginTop: height * .07 }}>
+                    <TouchableOpacity onPress={() => this.props.navigation.navigate('Home')} style={[styles.textInput, { alignItems: 'center', borderWidth: 0, backgroundColor: '#FDC500', elevation: 3 }]}>
                         <Text style={[styles.TextiputHeader, { color: 'rgba(255,255,255,1)' }]} >Go To HomeScreen</Text>
                     </TouchableOpacity>
 

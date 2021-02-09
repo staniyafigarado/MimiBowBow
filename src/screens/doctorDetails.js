@@ -1,8 +1,8 @@
 import React from 'react';
-import { Text, View, Dimensions, Image, Alert, Modal, ImageBackground, Button } from 'react-native';
+import { Text, View, Dimensions, Image, Alert, Modal, ImageBackground, Button, ToastAndroid } from 'react-native';
 import SearchBar from 'react-native-search-bar';
 import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
-import { Icon } from 'react-native-elements';
+import { Icon, Badge } from 'react-native-elements';
 import { Rating, AirbnbRating } from 'react-native-ratings';
 import styles from '../styles/styles';
 import WooCommerce from '../utils/wooApi';
@@ -34,11 +34,19 @@ export default class App extends React.Component {
             cartData: [],
             btnValue: 1,
             isVisible: false,
-            date: '',
+            date: '', cartCount: 0
         };
     }
     componentDidMount = async () => {
-
+        try {
+            let data = await AsyncStorage.getItem('loginDetails');
+            console.log('Data 100', data);
+            if (data !== null) {
+                this.setState({ loginData: JSON.parse(data) });
+            }
+        } catch (error) {
+            console.log('Something went wrong', error);
+        }
         var that = this;
         var date = new Date().getDate();
         var month = new Date().getMonth() + 1;
@@ -58,8 +66,44 @@ export default class App extends React.Component {
         }).catch(error => {
             console.log(error + "123");
         });
-
+        this.getShareKey();
+        const existingCart = await AsyncStorage.getItem('cart');
+        this.setState({
+            cartCount: JSON.parse(existingCart).length
+        });
     }
+
+    getShareKey() {
+        return fetch('https://mimiandbowbow.com/alpha/wp-json/wc/v3/wishlist/get_by_user/' + this.state.loginData.user_id + '?consumer_key=ck_3dc8e609d9bf166cc09293bf3ebdb6a0c19bb46d&consumer_secret=cs_18122b00e28ea61f7560e0d0e16ad4075aa8f326')
+            .then((response) => response.json())
+            .then((json) => {
+                console.log(JSON.stringify(json));
+                this.setState({ shareKey: json[0]["share_key"] })
+                console.log(json[0]["share_key"])
+            })
+            .catch((error) => {
+                console.error(error);
+            });
+    }
+
+    addToWhishlist() {
+        const data = new FormData()
+        data.append('product_id', this.state.productId)
+        return fetch('https://mimiandbowbow.com/alpha/wp-json/wc/v3/wishlist/' + this.state.shareKey + '/add_product?consumer_key=ck_3dc8e609d9bf166cc09293bf3ebdb6a0c19bb46d&consumer_secret=cs_18122b00e28ea61f7560e0d0e16ad4075aa8f326', {
+            method: 'POST',
+            body: data,
+        })
+            .then(response => response.text())
+            .then(result => {
+                console.log(result)
+                ToastAndroid.show("Item Added to whishlist", ToastAndroid.SHORT);
+            })
+
+            .catch(error => {
+                console.error(error)
+            })
+    }
+
     addToCart = async (item, date) => {
         const existingCart = await AsyncStorage.getItem('cart')
 
@@ -129,7 +173,7 @@ export default class App extends React.Component {
     render() {
         if (this.state.isLoading) {
             return (
-                <View style={{ flex: 1, backgroundColor: '#f5c711' }}>
+                <View style={{ flex: 1, backgroundColor: '#FFF' }}>
                     <PacmanIndicator
                         count={5}
                         color='black'
@@ -156,18 +200,28 @@ export default class App extends React.Component {
 					</Text>
                     <TouchableOpacity onPress={() => this.props.navigation.navigate('CartPage')}>
                         <Icon name='cart' size={40} type='material-community' color='#343434' />
+                        {this.state.cartCount != 0 ?
+                            /* {this.state.cartCount = 0 ? */
+                            <Badge value={this.state.cartCount} status="error" containerStyle={{ position: 'absolute', top: -1, right: -1 }} />
+                            : null
+                        }
                     </TouchableOpacity>
                 </View>
-                <View style={{ flexDirection: 'row', marginLeft: width * .05, alignItems: 'center' }}>
-                    <View>
-                        <Text style={[styles.TitleText, { color: 'rgba(255,255,255,1)', width: width * .75 }]}>{this.state.productData.name}</Text>
-                        {/* <Text style={[styles.TitleText, { color: 'rgba(255,255,255,1)', width: width * .7 }]}>{this.props.navigation.state.params.Title}</Text>
-                        <Text style={{ fontFamily: 'Montserrat-Medium', fontSize: 12, color: 'rgba(255,255,255,1)' }}>{this.props.navigation.state.params.Specialization}</Text> */}
+                <ScrollView showsVerticalScrollIndicator={false} style={{ backgroundColor: '#FFF' }}>
+                    <View style={{ flexDirection: 'row', marginHorizontal: width * .05, alignItems: 'center' }}>
+                        <View style={{ width: '75%' }}>
+                            <Text style={[styles.TitleText, { color: '#343434', }]}>{this.state.productData.name}</Text>
+                            <Text style={{ fontFamily: 'Montserrat-Medium', fontSize: 12, color: '#343434' }}>Lorem ipsum dolor sit amet, consetetur sadipscing</Text>
+                        </View>
+                        {/* {/* <Icon name='share-variant' size={25} type='material-community' color='#343434' margin={20} /> */}
+                        <View style={{ width: '25%', justifyContent: 'space-between', flexDirection: 'row' }}>
+                            <TouchableOpacity onPress={() => this.addToWhishlist()}>
+                                <Icon name='heart' size={25} type='material-community' color='#343434' />
+                            </TouchableOpacity>
+                            <Icon name='share-variant' size={25} type='material-community' color='#343434' />
+                        </View>
                     </View>
-                    <Icon name='share-variant' size={25} type='material-community' color='rgba(255,255,255,1)' margin={20} />
-                </View>
-                <ScrollView>
-                    <View style={{ borderRadius: 5, width: width * .9, margin: width * .05, height: height * .8, marginBottom: height * 0.1 }}>
+                    <View style={{ borderRadius: 5, width: width * .9, margin: width * .05, marginBottom: height * 0.15, elevation: 7 }}>
                         <Image
                             source={{ uri: this.state.productData.images[0] ? this.state.productData.images[0].src : "https://www.aiimsnagpur.edu.in/sites/default/files/inline-images/no-image-icon_27.png" }}
                             style={{ width: width * .9, height: height * .35, borderRadius: 2, resizeMode: 'stretch' }}
@@ -176,7 +230,7 @@ export default class App extends React.Component {
                             source={{ uri: this.props.navigation.state.params.Image }}
                             style={{ width: width * .9, height: height * .35, borderRadius: 2, resizeMode: 'stretch' }}
                         /> */}
-                        <View style={{ backgroundColor: 'rgba(255,255,255,1)', padding: width * .05 }}>
+                        <View style={{ backgroundColor: 'rgba(255,255,255,1)', padding: width * .05, width: width * .9 }}>
                             <Text style={{ fontSize: 23, fontFamily: 'Montserrat-Medium' }}>Price : ₹{this.state.productData.price}‎ </Text>
                             {/* <Text style={{ fontSize: 23, fontFamily: 'Montserrat-Medium' }}>Fee : ₹{this.props.navigation.state.params.Price} </Text> */}
                             <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -227,7 +281,7 @@ export default class App extends React.Component {
                             <TouchableOpacity
                                 // onPress={() => this.addToCart(this.state.productData, this.state.date)} 
                                 onPress={() => this.props.navigation.navigate('DoctorAppoinment')}
-                                style={{ width: width * .8, alignItems: 'center', justifyContent: 'center', backgroundColor: '#343434', height: height * 0.08, borderRadius: 3 }}>
+                                style={{ width: width * .8, alignItems: 'center', justifyContent: 'center', backgroundColor: '#FDC500', height: height * 0.08, borderRadius: 3, elevation: 3 }}>
                                 <Text style={[styles.TextiputHeader, { color: 'rgba(255,255,255,1)' }]}>BOOK NOW</Text>
                             </TouchableOpacity>
                             {/* {this.state.btnValue === 1 ?

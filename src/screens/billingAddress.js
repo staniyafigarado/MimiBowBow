@@ -101,11 +101,11 @@ export default class App extends React.Component {
     render() {
         if (this.state.isLoading) {
             return (
-                <View style={{ flex: 1, backgroundColor: '#f5c711' }}>
+                <View style={{ flex: 1, backgroundColor: '#FFF' }}>
                     <PacmanIndicator
                         count={5}
-                        color='black'
-                        animationDuration={600}
+                        color='#343434'
+                        animationDuration={200}
                         size={100}
                     />
                 </View>
@@ -140,7 +140,7 @@ export default class App extends React.Component {
                     />
                 </View> */}
                 {this.state.editStatus == 0 ?
-                    <View style={{ flex: 1 }}>
+                    <View style={{ flex: 1, backgroundColor: '#FFF' }}>
                         <View style={{ flexDirection: 'row', height: height * .1, alignItems: 'center', justifyContent: 'space-between', marginLeft: width * .05, marginRight: width * .05 }}>
                             <Text style={[styles.TitleText, { color: '#343434', fontSize: 20 }]}>Billing Details</Text>
                             <TouchableOpacity onPress={() => { this.editStatusFun(1) }}>
@@ -148,7 +148,7 @@ export default class App extends React.Component {
                             </TouchableOpacity>
                         </View>
                         <View >
-                            <ScrollView showsVerticalScrollIndicator={false}>
+                            <ScrollView showsVerticalScrollIndicator={false} style={{ height: '100%', marginBottom: height * 0.15 }}>
                                 <View style={{ alignItems: 'center' }}>
                                     <View style={styles.profileTextInput}>
                                         {/* <Text style={styles.textinputText}>{this.state.dataSource.first_name ? this.state.dataSource.first_name : "First Name"}</Text> */}
@@ -222,11 +222,11 @@ export default class App extends React.Component {
 
                     </View>
                     :
-                    <View style={{ flex: 1 }}>
+                    <View style={{ flex: 1, backgroundColor: '#FFF' }}>
                         <View style={{ flexDirection: 'row', height: height * .1, alignItems: 'center', justifyContent: 'space-between', marginLeft: width * .05, marginRight: width * .05 }}>
                             <Text style={[styles.TitleText, { color: '#343434', fontSize: 20 }]}>Billing Details</Text>
                         </View>
-                        <ScrollView>
+                        <ScrollView style={{ height: '100%', marginBottom: height * 0.15 }} showsVerticalScrollIndicator={false}>
                             <View style={{ alignItems: 'center' }}>
                                 <View style={styles.profileTextInput}>
                                     <TextInput style={styles.textinputText}
@@ -353,7 +353,7 @@ export default class App extends React.Component {
                             <View style={{ alignItems: 'center', paddingBottom: height * .025 }}>
                                 <TouchableOpacity
                                     // onPress={() => { this.upadateBillingAddress() }}
-                                    style={{ width: width * .9, marginTop: width * .05, alignItems: 'center', justifyContent: 'center', backgroundColor: '#343434', height: height * 0.08, borderRadius: 3 }}>
+                                    style={{ width: width * .9, marginTop: width * .05, alignItems: 'center', justifyContent: 'center', backgroundColor: '#FDC500', height: height * 0.08, borderRadius: 3, elevation: 3 }}>
                                     <Text style={[styles.TextiputHeader, { color: 'rgba(255,255,255,1)' }]}>SUBMIT</Text>
                                 </TouchableOpacity>
                             </View>

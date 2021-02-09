@@ -78,10 +78,10 @@ export default class App extends React.Component {
     render() {
         if (this.state.isLoading) {
             return (
-                <View style={{ flex: 1, backgroundColor: '#f5c711' }}>
+                <View style={{ flex: 1, backgroundColor: '#FFF' }}>
                     <PacmanIndicator
                         count={5}
-                        color='black'
+                        color='#343434'
                         animationDuration={600}
                         size={100}
                     />
@@ -90,7 +90,7 @@ export default class App extends React.Component {
         }
         else {
             return (
-                <View style={{ flex: 1, backgroundColor: '#f5c711' }}>
+                <View style={{ flex: 1, backgroundColor: '#FDC500' }}>
                     <View style={{ flexDirection: 'row', height: height * .1, alignItems: 'center', justifyContent: 'space-between', margin: width * .05 }}>
                         <TouchableOpacity
                             onPress={() => { this.props.navigation.toggleDrawer(); }}
@@ -117,53 +117,55 @@ export default class App extends React.Component {
                         //onCancelButtonPress={...}
                         />
                     </View>
-                    <View style={{ flexDirection: 'row', height: height * .1, alignItems: 'center', justifyContent: 'space-between', marginLeft: width * .05, marginRight: width * .05 }}>
-                        <Text style={[styles.TitleText, { color: '#343434', fontSize: 20 }]}>Order Review</Text>
+                    <ScrollView style={{ backgroundColor: '#FFF' }} showsVerticalScrollIndicator={false}>
+                        <View style={{ flexDirection: 'row', height: height * .07, alignItems: 'center', justifyContent: 'space-between', marginLeft: width * .05, marginRight: width * .05 }}>
+                            <Text style={[styles.TitleText, { color: '#343434', fontSize: 20 }]}>Order Review</Text>
 
-                    </View>
-                    <View style={{ width: width * .90, height: height * .5, backgroundColor: 'white', marginLeft: width * .05, marginRight: width * .05, borderRadius: 5, padding: width * .05, alignItems: 'flex-start' }}>
-                        <Rating imageSize={25} onFinishRating={this.ratingCompleted} startingValue={0} />
-                        <Text style={{ fontFamily: 'Montserrat-Regular', fontSize: 14, color: '#343434', paddingTop: 10 }}> {this.state.ratingValue}/5 rating</Text>
-                        <TextInput style={{ height: height * .08, width: width * .8, backgroundColor: 'white', fontFamily: 'Montserrat-Regular', }}
-                            placeholder={this.state.reviewComment ? this.state.reviewComment : "Write a review"}
-                            keyboardType='email-address'
-                            returnKeyType={"next"}
-                            onChangeText={reviewComment => this.setState({ reviewComment })}
-                        />
-                        <View>
-                            <View style={{ flexDirection: 'row' }}>
-                                <TouchableOpacity onPress={reviewComment => this.setState({ reviewComment: "Very Good" })} style={styles.reviewBtn}>
-                                    <Text style={{ fontFamily: 'Montserrat-Regular', fontSize: 14, color: '#343434', paddingTop: 10 }}>Very Good</Text>
-                                </TouchableOpacity>
-                                <TouchableOpacity onPress={reviewComment => this.setState({ reviewComment: "Good" })} style={styles.reviewBtn}>
-                                    <Text style={{ fontFamily: 'Montserrat-Regular', fontSize: 14, color: '#343434', paddingTop: 10 }}>Good</Text>
-                                </TouchableOpacity>
-                            </View>
-                            <View style={{ flexDirection: 'row' }}>
-                                <TouchableOpacity onPress={reviewComment => this.setState({ reviewComment: "Good Quality" })} style={styles.reviewBtn}>
-                                    <Text style={{ fontFamily: 'Montserrat-Regular', fontSize: 14, color: '#343434', paddingTop: 10 }}>Good Quality</Text>
-                                </TouchableOpacity>
-                                <TouchableOpacity onPress={reviewComment => this.setState({ reviewComment: "Average" })} style={styles.reviewBtn}>
-                                    <Text style={{ fontFamily: 'Montserrat-Regular', fontSize: 14, color: '#343434', paddingTop: 10 }}>Average</Text>
-                                </TouchableOpacity>
-                            </View>
-                            <View style={{ flexDirection: 'row' }}>
-                                <TouchableOpacity onPress={reviewComment => this.setState({ reviewComment: "Satisfied" })} style={styles.reviewBtn}>
-                                    <Text style={{ fontFamily: 'Montserrat-Regular', fontSize: 14, color: '#343434', paddingTop: 10 }}>Satisfied</Text>
-                                </TouchableOpacity>
-                                <TouchableOpacity onPress={reviewComment => this.setState({ reviewComment: "Bad" })} style={styles.reviewBtn}>
-                                    <Text style={{ fontFamily: 'Montserrat-Regular', fontSize: 14, color: '#343434', paddingTop: 10 }}>Bad</Text>
-                                </TouchableOpacity>
+                        </View>
+                        <View style={{ width: width * .90, height: height * .5, backgroundColor: 'white', marginLeft: width * .05, marginRight: width * .05, borderRadius: 5, padding: width * .05, alignItems: 'flex-start' }}>
+                            <Rating imageSize={25} onFinishRating={this.ratingCompleted} startingValue={0} />
+                            <Text style={{ fontFamily: 'Montserrat-Regular', fontSize: 14, color: '#343434', paddingTop: 10 }}> {this.state.ratingValue}/5 rating</Text>
+                            <TextInput style={{ height: height * .08, width: width * .8, backgroundColor: 'white', fontFamily: 'Montserrat-Regular', }}
+                                placeholder={this.state.reviewComment ? this.state.reviewComment : "Write a review"}
+                                keyboardType='email-address'
+                                returnKeyType={"next"}
+                                onChangeText={reviewComment => this.setState({ reviewComment })}
+                            />
+                            <View>
+                                <View style={{ flexDirection: 'row', marginTop: height * 0.03 }}>
+                                    <TouchableOpacity onPress={reviewComment => this.setState({ reviewComment: "Very Good" })} style={styles.reviewBtn}>
+                                        <Text style={{ fontFamily: 'Montserrat-Regular', fontSize: 14, color: '#343434', paddingTop: 10 }}>Very Good</Text>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity onPress={reviewComment => this.setState({ reviewComment: "Good" })} style={styles.reviewBtn}>
+                                        <Text style={{ fontFamily: 'Montserrat-Regular', fontSize: 14, color: '#343434', paddingTop: 10 }}>Good</Text>
+                                    </TouchableOpacity>
+                                </View>
+                                <View style={{ flexDirection: 'row' }}>
+                                    <TouchableOpacity onPress={reviewComment => this.setState({ reviewComment: "Good Quality" })} style={styles.reviewBtn}>
+                                        <Text style={{ fontFamily: 'Montserrat-Regular', fontSize: 14, color: '#343434', paddingTop: 10 }}>Good Quality</Text>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity onPress={reviewComment => this.setState({ reviewComment: "Average" })} style={styles.reviewBtn}>
+                                        <Text style={{ fontFamily: 'Montserrat-Regular', fontSize: 14, color: '#343434', paddingTop: 10 }}>Average</Text>
+                                    </TouchableOpacity>
+                                </View>
+                                <View style={{ flexDirection: 'row' }}>
+                                    <TouchableOpacity onPress={reviewComment => this.setState({ reviewComment: "Satisfied" })} style={styles.reviewBtn}>
+                                        <Text style={{ fontFamily: 'Montserrat-Regular', fontSize: 14, color: '#343434', paddingTop: 10 }}>Satisfied</Text>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity onPress={reviewComment => this.setState({ reviewComment: "Bad" })} style={styles.reviewBtn}>
+                                        <Text style={{ fontFamily: 'Montserrat-Regular', fontSize: 14, color: '#343434', paddingTop: 10 }}>Bad</Text>
+                                    </TouchableOpacity>
+                                </View>
                             </View>
                         </View>
-                    </View>
-                    <View style={{ alignItems: 'center', paddingBottom: height * .025 }}>
-                        <TouchableOpacity
-                            onPress={() => { this.submitReview() }}
-                            style={{ width: width * .9, marginTop: width * .05, alignItems: 'center', justifyContent: 'center', backgroundColor: '#343434', height: height * 0.08, borderRadius: 3 }}>
-                            <Text style={[styles.TextiputHeader, { color: 'rgba(255,255,255,1)' }]}>SUBMIT</Text>
-                        </TouchableOpacity>
-                    </View>
+                        <View style={{ alignItems: 'center', paddingBottom: height * .15, marginTop: height * 0.03 }}>
+                            <TouchableOpacity
+                                onPress={() => { this.submitReview() }}
+                                style={{ width: width * .9, marginTop: width * .05, alignItems: 'center', justifyContent: 'center', backgroundColor: '#FDC500', height: height * 0.08, borderRadius: 3, elevation: 3 }}>
+                                <Text style={[styles.TextiputHeader, { color: 'rgba(255,255,255,1)' }]}>SUBMIT</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </ScrollView>
                 </View>
             );
         }

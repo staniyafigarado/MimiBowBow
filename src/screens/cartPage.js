@@ -38,10 +38,75 @@ export default class App extends React.Component {
             couponCode: '',
             couponAmount: 0,
             couponLimit: 0,
-            dateIndex: 0,
+            dateIndex: 0, dataSource: [], loginData: '', productId: [], id: ''
         };
     }
-    componentDidMount = async () => {
+    // async componentDidMount() {
+    //     try {
+    //         let data = await AsyncStorage.getItem('loginDetails');
+    //         console.log('Data 100', data);
+    //         if (data !== null) {
+    //             this.setState({
+    //                 loginData: JSON.parse(data),
+
+    //             });
+    //         }
+    //     } catch (error) {
+    //         console.log('Something went wrong', error);
+    //     }
+    //     this.cartItems();
+
+    //     const existingCart = await AsyncStorage.getItem('cart')
+    //     const datePicked = await AsyncStorage.getItem('datePicked')
+
+    //     const arrayLength = JSON.parse(existingCart).length;
+    //     const dateAryLength = JSON.parse(datePicked).length;
+    //     const dummyQnty = this.state.qnty
+    //     const dummyPrice = this.state.priceArray
+    //     this.setState({
+    //         isLoading: false,
+    //         productData: JSON.parse(existingCart),
+    //         datePicked: JSON.parse(datePicked),
+    //         dateAryLength: dateAryLength,
+
+    //     });
+    //     console.log(this.state.dateAryLength)
+    //     console.log(datePicked)
+    //     for (let i = 0; i < arrayLength; i++) {
+    //         dummyQnty[i] = 1,
+    //             dummyPrice[i] = this.state.productData[i].price
+    //         this.setState({
+    //             totalAmount: this.state.totalAmount + Number(this.state.priceArray[i])
+    //         });
+    //     }
+    //     this.setState({
+    //         isLoading: false,
+    //         qnty: dummyQnty,
+    //         priceArray: dummyPrice,
+    //         totalAmount: this.state.totalAmount
+    //     });
+    //     WooCommerce.get('coupons').then(response => {
+    //         console.log(response + "123");
+    //         this.setState({
+    //             couponsData: response.data,
+    //             isLoading: false,
+    //         });
+    //     }).catch(error => {
+    //         console.log(error + "123");
+    //     });
+    // }
+
+    async componentDidMount() {
+        try {
+            let data = await AsyncStorage.getItem('loginDetails');
+            console.log('Data 100', data);
+            if (data !== null) {
+                this.setState({ loginData: JSON.parse(data) });
+            }
+        } catch (error) {
+            console.log('Something went wrong', error);
+        }
+        this.cartItems();
         const existingCart = await AsyncStorage.getItem('cart')
         const datePicked = await AsyncStorage.getItem('datePicked')
 
@@ -81,6 +146,53 @@ export default class App extends React.Component {
             console.log(error + "123");
         });
     }
+
+    cartItems() {
+
+        return fetch('https://mimiandbowbow.com/alpha/wp-json/cocart/v1/get-cart/customer/' + this.state.loginData.user_id + '?consumer_key=ck_3dc8e609d9bf166cc09293bf3ebdb6a0c19bb46d&consumer_secret=cs_18122b00e28ea61f7560e0d0e16ad4075aa8f326')
+            .then((response) => response.json())
+            .then((json) => {
+                console.log(JSON.stringify(json));
+
+                var data = json.map(function (item) {
+                    return {
+                        id: item.product_id,
+                    };
+                });
+
+                this.setState({
+                    dataSource: json,
+                    isLoading: false,
+                    productId: data
+                });
+                console.log(this.state.productId);
+            })
+            .catch((error) => {
+                console.error(error);
+            });
+        // var myHeaders = new Headers();
+        // myHeaders.append("X-Shopify-Storefont-Access-Token", "18e4894f164b996610cbcb4f8690b6be");
+        // myHeaders.append("Accept", "application/json");
+        // myHeaders.append("Content-Type", "application/json");
+        // myHeaders.append("Cookie", "wp_cocart_session_6892ecc2a5f867b016ba3227fad9a964=1%7C%7C1611557790%7C%7C1611471390%7C%7C11b94ccc8d26e63eea5f120c1d7ff2fc; woocommerce_items_in_cart=1; woocommerce_cart_hash=8af003f63cc2c00faddaffbb5ad08a1f; swpm_session=a64e6a0961a7d1cc70571b5dafbdcf90");
+
+        // var graphql = JSON.stringify({
+        //     query: "query {\r\n  node(id:\"Z2lkOi8vc2hvcGlmeS9Qcm9kdWN0LzU1NjExODEzNzI1ODE=\") {\r\n    ...on Product {\r\n    collections(first:20){\r\n  		edges{\r\n        node{\r\n          products(first:20){\r\n            edges{\r\n              node{\r\n                title\r\n                onlineStoreUrl\r\n                images(first:1) {\r\n                  edges {\r\n                    node {\r\n                      originalSrc\r\n                    }\r\n                  }\r\n                }\r\n              }\r\n            }\r\n          }\r\n        }\r\n      }\r\n    }\r\n    }\r\n  }\r\n}",
+        //     variables: {}
+        // })
+        // var requestOptions = {
+        //     method: 'GET',
+        //     headers: myHeaders,
+        //     body: graphql,
+        //     redirect: 'follow'
+        // };
+
+        // fetch("https://mimiandbowbow.com/alpha/wp-json/cocart/v1/get-cart/customer/168?oauth_consumer_key=ck_3dc8e609d9bf166cc09293bf3ebdb6a0c19bb46d&oauth_signature_method=HMAC-SHA1", requestOptions)
+        //     .then(response => response.text())
+        //     .then(result => console.log(result))
+        //     .catch(error => console.log('error', error));
+    }
+
     cartSave = async () => {
         console.log(this.state.productData)
         console.log(this.state.priceArray)
@@ -93,7 +205,7 @@ export default class App extends React.Component {
         await AsyncStorage.setItem('couponAmount', JSON.stringify(this.state.couponAmount))
         await AsyncStorage.setItem('datePicked', JSON.stringify(this.state.datePicked))
 
-        this.props.navigation.navigate('CartBillingAddress')
+
     }
     goToCart = async () => {
         const existingProducts = await AsyncStorage.getItem('cart')
@@ -191,7 +303,7 @@ export default class App extends React.Component {
         const { navigate } = this.props.navigation;
         if (this.state.isLoading) {
             return (
-                <View style={{ flex: 1, backgroundColor: '#f5c711' }}>
+                <View style={{ flex: 1, backgroundColor: '#FFF' }}>
                     <PacmanIndicator
                         count={5}
                         color='black'
@@ -202,8 +314,8 @@ export default class App extends React.Component {
             );
         }
         return (
-            <View style={{ flex: 1, backgroundColor: '#f5c711' }}>
-                <View style={{ flexDirection: 'row', height: height * .1, alignItems: 'center', justifyContent: 'space-between', margin: width * .05 }}>
+            <View style={{ flex: 1, backgroundColor: '#FFF' }}>
+                <View style={{ flexDirection: 'row', height: height * .15, alignItems: 'center', justifyContent: 'space-between', padding: width * .05, width: '100%', backgroundColor: '#f5c711' }}>
                     <TouchableOpacity
                         onPress={() => { this.props.navigation.toggleDrawer(); }}
                     >
@@ -351,7 +463,7 @@ export default class App extends React.Component {
                             </TouchableOpacity>
                         </View>
                         {this.state.productData.length != 0 ?
-                            <TouchableOpacity onPress={() => { this.cartSave(); }} style={{ width: width * .95, marginBottom: height * .02, alignItems: 'center', justifyContent: 'center', backgroundColor: '#343434', height: height * 0.08, borderRadius: 3 }}>
+                            <TouchableOpacity onPress={() => { this.cartSave(); this.props.navigation.navigate('CartBillingAddress') }} style={{ width: width * .95, marginBottom: height * .02, alignItems: 'center', justifyContent: 'center', backgroundColor: '#f5c711', height: height * 0.08, borderRadius: 3, elevation: 3 }}>
                                 <Text style={[styles.TextiputHeader, { color: 'rgba(255,255,255,1)' }]}>PLACE ORDER</Text>
                             </TouchableOpacity>
                             :

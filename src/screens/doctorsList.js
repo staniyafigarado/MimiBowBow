@@ -61,18 +61,17 @@ export default class App extends React.Component {
             isLoading: true,
             gridView: true,
             selectedCategory: '',
-            isSelected: true,
+            isSelected: true, cartCount: 0
         };
         this.arrayholder = []
     }
     componentDidMount = async () => {
 
-        WooCommerce.get('products?per_page=100').then(response => {
+        WooCommerce.get('products?category=190&per_page=100', { per_page: 100 }).then(response => {
             console.log(response.data + "123");
             this.setState({
                 dataSource: response.data,
                 isLoading: false,
-                selectedCategory: 'Doctors'
             });
             this.arrayholder = response.data;
         }).catch(error => {
@@ -107,7 +106,7 @@ export default class App extends React.Component {
     // List View
     renderItemList = ({ item }) => {
         return <TouchableOpacity
-            onPress={() => this.props.navigation.navigate('DoctorDetails', { petData: item })}
+            onPress={() => this.props.navigation.navigate('PetDetails', { petData: item })}
             style={{ height: height * .25, padding: width * .025, backgroundColor: 'rgba(255,255,255,1)', borderTopWidth: 2, borderTopColor: '#f5c711', flexDirection: 'row' }}>
             <Image
                 source={{ uri: item.images[0] ? item.images[0].src : "https://www.aiimsnagpur.edu.in/sites/default/files/inline-images/no-image-icon_27.png" }}
@@ -135,7 +134,7 @@ export default class App extends React.Component {
     // Grid view
     renderItemGrid = ({ item }) => {
         return <TouchableOpacity
-            onPress={() => this.props.navigation.navigate('DoctorDetails', { petData: item })}
+            onPress={() => this.props.navigation.navigate('PetDetails', { petData: item })}
             style={{ width: width * .5, height: width * .65, backgroundColor: 'rgba(255,255,255,1)', borderRightWidth: .5 }}>
             <Image
                 source={{ uri: item.images[0] ? item.images[0].src : "https://www.aiimsnagpur.edu.in/sites/default/files/inline-images/no-image-icon_27.png" }}
@@ -179,7 +178,7 @@ export default class App extends React.Component {
     render() {
         if (this.state.isLoading) {
             return (
-                <View style={{ flex: 1, backgroundColor: '#f5c711' }}>
+                <View style={{ flex: 1, backgroundColor: '#FFF' }}>
                     <PacmanIndicator
                         count={5}
                         color='black'
@@ -190,7 +189,7 @@ export default class App extends React.Component {
             );
         }
         return (
-            <View style={{ flex: 1, backgroundColor: '#f5c711' }}>
+            <View style={{ flex: 1, backgroundColor: '#FDC500' }}>
                 <View style={{ flexDirection: 'row', height: height * .1, alignItems: 'center', justifyContent: 'space-between', margin: width * .05 }}>
                     <TouchableOpacity
                         onPress={() => { this.props.navigation.toggleDrawer(); }}
@@ -229,9 +228,9 @@ export default class App extends React.Component {
                     />
                 </View>
                 {/* categories */}
-                <ScrollView showsVerticalScrollIndicator={false}>
+                <ScrollView showsVerticalScrollIndicator={false} style={{ backgroundColor: '#FFF' }}>
                     <View style={{ flexDirection: 'row', height: height * .1, alignItems: 'center', justifyContent: 'space-between', marginLeft: width * .05, marginRight: width * .05 }}>
-                        <Text style={[styles.TitleText, { color: '#343434', width: width * .6 }]}>{this.state.selectedCategory}</Text>
+                        <Text style={[styles.TitleText, { color: '#343434', width: width * .6 }]}>Doctors</Text>
                         <TouchableOpacity onPress={this.updateTitleStatus}>
                             <Icon name='view-grid' size={30} type='material-community' color='#343434' />
                         </TouchableOpacity>
@@ -247,9 +246,7 @@ export default class App extends React.Component {
                             style={{ marginBottom: height * .1 }}
                             keyExtractor={(item, index) => index}
                             numColumns={this.state.gridView ? 2 : 1}
-                            data={this.state.dataSource.filter(item => {
-                                return item.categories[0].name === this.state.selectedCategory;
-                            })}
+                            data={this.state.dataSource}
                             extraData={this.state}
                             renderItem={this.renderItemGrid}
                         />
@@ -258,9 +255,10 @@ export default class App extends React.Component {
                                 style={{ marginBottom: height * .1 }}
                                 keyExtractor={(item, index) => index}
                                 numColumns={this.state.gridView ? 2 : 1}
-                                data={this.state.dataSource.filter(item => {
-                                    return item.categories[0].name === this.state.selectedCategory;
-                                })}
+                                // data={this.state.dataSource.filter(item => {
+                                //     return item.categories[0].name === this.state.selectedCategory;
+                                // })}
+                                data={this.state.dataSource}
                                 extraData={this.state}
                                 renderItem={this.renderItemList}
                             />

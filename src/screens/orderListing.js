@@ -1,8 +1,8 @@
 import React from 'react';
-import { Text, View, Dimensions, Image, BackHandler, FlatList } from 'react-native';
+import { Text, View, Dimensions, Image, BackHandler, FlatList, StatusBar } from 'react-native';
 import SearchBar from 'react-native-search-bar';
 import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
-import { Icon } from 'react-native-elements';
+import { Icon, Badge } from 'react-native-elements';
 import { Rating, AirbnbRating } from 'react-native-ratings';
 import styles from '../styles/styles';
 import WooCommerce from '../utils/wooApi';
@@ -32,7 +32,7 @@ export default class App extends React.Component {
             isLoading: true,
             gridView: true,
             selectedCategory: '',
-            userid: '', dataSource: []
+            userid: '', dataSource: [], cartCount: 0
         };
     }
     componentDidMount = async () => {
@@ -48,25 +48,29 @@ export default class App extends React.Component {
         }).catch(error => {
             console.log(error + "1235");
         });
-
+        const existingCart = await AsyncStorage.getItem('cart');
+        this.setState({
+            cartCount: JSON.parse(existingCart).length
+        });
     }
     render() {
-        // if (this.state.isLoading) {
-        //     return (
-        //         <View style={{ flex: 1, backgroundColor: '#f5c711' }}>
-        //             <PacmanIndicator
-        //                 count={5}
-        //                 color='black'
-        //                 animationDuration={600}
-        //                 size={100}
-        //             />
-        //         </View>
-        //     );
-        // }
+        if (this.state.isLoading) {
+            return (
+                <View style={{ flex: 1, backgroundColor: '#FFF' }}>
+                    <PacmanIndicator
+                        count={5}
+                        color='#343434'
+                        animationDuration={600}
+                        size={100}
+                    />
+                </View>
+            );
+        }
 
         return (
-            <View style={{ flex: 1, backgroundColor: '#f5c711' }}>
-                <View style={{ flexDirection: 'row', height: height * .1, alignItems: 'center', justifyContent: 'space-between', margin: width * .05 }}>
+            <View style={{ flex: 1, backgroundColor: '#FFF' }}>
+                <StatusBar barStyle="dark-content" hidden={true} backgroundColor="#FDC500" translucent={true} />
+                <View style={{ flexDirection: 'row', height: height * .15, alignItems: 'center', justifyContent: 'space-between', padding: width * .05, backgroundColor: '#FDC500', width: '100%' }}>
                     <TouchableOpacity
                         onPress={() => { this.props.navigation.toggleDrawer(); }}
                     >
@@ -81,6 +85,11 @@ export default class App extends React.Component {
                     </Text>
                     <TouchableOpacity onPress={() => this.props.navigation.navigate('CartPage')}>
                         <Icon name='cart' size={40} type='material-community' color='#343434' />
+                        {this.state.cartCount != 0 ?
+                            /* {this.state.cartCount = 0 ? */
+                            <Badge value={this.state.cartCount} status="error" containerStyle={{ position: 'absolute', top: -1, right: -1 }} />
+                            : null
+                        }
                     </TouchableOpacity>
                 </View>
                 {/* <View style={[styles.textInput, { marginLeft: width * .05, borderWidth: 0, marginBottom: 3, elevation: 5 }]}>
@@ -96,7 +105,7 @@ export default class App extends React.Component {
                     <Text style={[styles.TitleText, { color: '#343434', fontSize: 20 }]}>My Orders</Text>
 
                 </View>
-                <ScrollView>
+                <ScrollView style={{ marginBottom: height * 0.1, height: '100%' }}>
                     <View style={{ flexDirection: 'row', marginLeft: width * .025 }}>
                         <FlatList
                             keyExtractor={(item, index) => index}
@@ -105,7 +114,7 @@ export default class App extends React.Component {
                                 // item.customer_id === this.state.userId ?
                                 <TouchableOpacity onPress={() => this.props.navigation.navigate('OrderDetails', {
                                     orderId: item.id,
-                                })} style={{ flexDirection: 'row', width: width * .90, height: height * .17, backgroundColor: 'white', margin: width * .025, borderRadius: 5 }}>
+                                })} style={{ flexDirection: 'row', width: width * .90, height: height * .17, backgroundColor: 'white', margin: width * .025, borderRadius: 5, elevation: 3 }}>
                                     <Image
                                         source={require('../assets/images/kitty.png')}
                                         style={{ width: height * .14, height: height * .14, margin: height * .015 }}

@@ -2,7 +2,7 @@ import React from 'react';
 import { Text, View, Dimensions, Image, TextInput, Alert } from 'react-native';
 import SearchBar from 'react-native-search-bar';
 import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
-import { Icon } from 'react-native-elements';
+import { Icon, Badge } from 'react-native-elements';
 import { StackActions, NavigationActions } from 'react-navigation';
 import { Rating, AirbnbRating } from 'react-native-ratings';
 //import DatePicker from 'react-native-datepicker';
@@ -35,15 +35,36 @@ export default class App extends React.Component {
             editStatus: 0,
             userName: '',
             phoneNo: '',
-            emailId: '', dataSource: [], userid: '', username: '', email: ''
+            emailId: '', dataSource: [], userid: '', username: '', email: '', loginData: '', cartCount: 0
         };
     }
-    componentDidMount() {
+    async componentDidMount() {
         // const userData = await AsyncStorage.getItem('user_id');
-        AsyncStorage.getItem('user_id').then((value) => this.setState({ 'userid': value }))
-        AsyncStorage.getItem('username').then((value) => this.setState({ 'username': value }))
-        AsyncStorage.getItem('email').then((value) => this.setState({ 'email': value }))
-        WooCommerce.get('customers/' + 135)
+        try {
+            let data = await AsyncStorage.getItem('loginDetails');
+            console.log('Data 100', data);
+            if (data !== null) {
+                this.setState({ loginData: JSON.parse(data) });
+                // this.props.setLoginData(data);
+            }
+            // this.setState({SchoolImage: JSON.parse(data)}, () =>
+            //   console.log('pling', this.state.SchoolImage),
+            // );
+        } catch (error) {
+            console.log('Something went wrong', error);
+        }
+        const existingCart = await AsyncStorage.getItem('cart');
+        this.setState({
+            cartCount: JSON.parse(existingCart).length
+        });
+        // AsyncStorage.getItem('user_id').then((value) => this.setState({ 'userid': value }))
+        // AsyncStorage.getItem('username').then((value) => this.setState({ 'username': value }))
+        // AsyncStorage.getItem('email').then((value) => this.setState({ 'email': value }))
+        this.fetchData();
+    }
+
+    fetchData() {
+        WooCommerce.get('customers/' + this.state.loginData.user_id)
             .then(res => {
                 console.log(res.data);
 
@@ -51,12 +72,13 @@ export default class App extends React.Component {
                     dataSource: res.data,
                     isLoading: false,
 
-                });
+                }); console.log(this.state.dataSource.avatar_url)
             })
             .catch(error => {
                 console.log(error);
             });
     }
+
     editStatusFun = (value) => {
         this.setState({
             editStatus: value
@@ -86,29 +108,31 @@ export default class App extends React.Component {
         });
     }
     handleSubmit = () => {
-        // e.preventDefault();
-        // this.getWPnonce();
+        const data = {
+            first_name: "James",
+            billing: {
+                first_name: "James"
+            },
+            shipping: {
+                first_name: "James"
+            }
+        };
 
-        WooCommerce.post('customers/' + 109, {
-            username: this.state.userName,
-            // email: this.state.emailId
-        })
-            .then(data => {
-                // ToastAndroid.show("Successfull", ToastAndroid.SHORT);
-                // this.props.navigation.navigate("Login");
-                console.log(data.data);
+        WooCommerce.put("customers/168", data)
+            .then((response) => {
+                console.log(response.data);
             })
-            .catch(error => {
-                console.log(error);
+            .catch((error) => {
+                console.log(error.response.data);
             });
     }
     render() {
         if (this.state.isLoading) {
             return (
-                <View style={{ flex: 1, backgroundColor: '#f5c711' }}>
+                <View style={{ flex: 1, backgroundColor: '#FFF' }}>
                     <PacmanIndicator
                         count={5}
-                        color='black'
+                        color='#343434'
                         animationDuration={600}
                         size={100}
                     />
@@ -135,12 +159,17 @@ export default class App extends React.Component {
                         </Text>
                     <TouchableOpacity onPress={() => this.props.navigation.navigate('CartPage')}>
                         <Icon name='cart' size={40} type='material-community' color='#343434' />
+                        {this.state.cartCount != 0 ?
+                            /* {this.state.cartCount = 0 ? */
+                            <Badge value={this.state.cartCount} status="error" containerStyle={{ position: 'absolute', top: -1, right: -1 }} />
+                            : null
+                        }
                     </TouchableOpacity>
                 </View>
                 {/* <Text>{this.state.user}</Text> */}
-                <Text>{this.state.userid}</Text>
+                {/* <Text>{this.state.userid}</Text> */}
                 {this.state.editStatus == 0 ?
-                    <View>
+                    <View style={{ height: '100%', backgroundColor: '#FFF' }}>
                         <View style={{ flexDirection: 'row', height: height * .1, alignItems: 'center', justifyContent: 'space-between', marginLeft: width * .05, marginRight: width * .05 }}>
                             <Text style={[styles.TitleText, { color: '#343434', fontSize: 20 }]}>My Profile</Text>
                             <TouchableOpacity onPress={() => { this.editStatusFun(1) }}>
@@ -152,13 +181,14 @@ export default class App extends React.Component {
                         <View style={{ alignItems: 'center' }}>
                             <Text style={{ alignSelf: 'flex-start', color: '#343434', fontSize: 15, fontFamily: 'Montserrat-SemiBold', paddingBottom: 3, paddingLeft: width * 0.05 }}>User Name</Text>
                             <View style={[styles.profileTextInput]}>
-                                <Text style={styles.textinputText}>{dataSource.username ? dataSource.username : this.state.username}</Text>
+                                <Text style={styles.textinputText}>{dataSource.username ? dataSource.billing.first_name + ' ' + dataSource.billing.last_name : this.state.username}</Text>
                             </View>
                         </View>
                         <View style={{ alignItems: 'center' }}>
                             <Text style={{ alignSelf: 'flex-start', color: '#343434', fontSize: 15, fontFamily: 'Montserrat-SemiBold', paddingBottom: 3, paddingLeft: width * 0.05 }}>Phone Number</Text>
                             <View style={styles.profileTextInput}>
-                                <Text style={styles.textinputText}>{dataSource.billing.phone}</Text>
+                                {dataSource.billing.phone ? <Text style={styles.textinputText}>{dataSource.billing.phone}</Text> : <Text style={styles.textinputText}>Phone Number</Text>
+                                }
                             </View>
                         </View>
                         <View style={{ alignItems: 'center' }}>
@@ -183,23 +213,22 @@ export default class App extends React.Component {
 
                     </View>
                     :
-                    <View style={{ marginBottom: height * .15, marginTop: height * .05 }}>
-                        <ScrollView>
-                            <View style={{ alignItems: 'center' }}>
-                                <View style={styles.profileTextInput}>
-                                    <TextInput style={styles.textinputText}
-                                        placeholder={'John Doe'}
-                                        keyboardType='email-address'
-                                        returnKeyType={"next"}
-                                        onChangeText={userName => this.setState({ userName })}
-                                    />
+                    <View style={{ marginBottom: height * .15, marginTop: height * .05, backgroundColor: '#FFF', height: '100%' }}>
+                        <ScrollView style={{ height: '100%' }} showsVerticalScrollIndicator={false}>
+                            <View style={{ alignItems: 'center', marginTop: height * 0.05 }}>
+                                <View style={styles.profileTextInput}><TextInput style={styles.textinputText}
+                                    placeholder={'User name'}
+                                    keyboardType='email-address'
+                                    returnKeyType={"next"}
+                                    onChangeText={userName => this.setState({ userName })}
+                                />
                                 </View>
                             </View>
                             <View style={{ alignItems: 'center' }}>
                                 <View style={styles.profileTextInput}>
                                     <TextInput style={styles.textinputText}
                                         // placeholder={this.state.dataSource.billing.phone}
-                                        placeholder={'9656039412'}
+                                        placeholder={'Phone Number'}
                                         keyboardType='phone-pad'
                                         maxLength={10}
                                         returnKeyType={"next"}
@@ -210,7 +239,7 @@ export default class App extends React.Component {
                             <View style={{ alignItems: 'center' }}>
                                 <View style={styles.profileTextInput}>
                                     <TextInput style={styles.textinputText}
-                                        placeholder={"Johndoe@gmail.com"}
+                                        placeholder={"Email address"}
                                         keyboardType='email-address'
                                         returnKeyType={"next"}
                                         onChangeText={emailId => this.setState({ emailId })}
@@ -221,7 +250,7 @@ export default class App extends React.Component {
                             <View style={{ alignItems: 'center' }}>
                                 <View style={[styles.profileTextInput, { height: height * .2 }]}>
                                     <TextInput style={[styles.textinputText, { height: height * .2 }]}
-                                        placeholder="Note"
+                                        placeholder="Address"
                                         keyboardType='email-address'
                                         returnKeyType={"next"}
                                     />
@@ -230,7 +259,7 @@ export default class App extends React.Component {
                             <View style={{ alignItems: 'center' }}>
                                 <TouchableOpacity
                                     onPress={() => { this.handleSubmit() }}
-                                    style={{ width: width * .9, marginTop: width * .05, alignItems: 'center', justifyContent: 'center', backgroundColor: '#343434', height: height * 0.08, borderRadius: 3 }}>
+                                    style={{ width: width * .9, marginTop: width * .05, alignItems: 'center', justifyContent: 'center', backgroundColor: '#FDC500', height: height * 0.08, borderRadius: 3, elevation: 3 }}>
                                     <Text style={[styles.TextiputHeader, { color: 'rgba(255,255,255,1)' }]}>SUBMIT</Text>
                                 </TouchableOpacity>
                             </View>

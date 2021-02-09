@@ -2,13 +2,13 @@ import React from 'react';
 import { Text, View, Dimensions, Image, TextInput } from 'react-native';
 import SearchBar from 'react-native-search-bar';
 import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
-import { Icon } from 'react-native-elements';
+import { Icon, Badge } from 'react-native-elements';
 import { Rating, AirbnbRating } from 'react-native-ratings';
 //import DatePicker from 'react-native-datepicker';
 import { Container, Header, Content, DatePicker, Button } from 'native-base';
 import { Picker } from '@react-native-community/picker';
 import styles from '../styles/styles';
-
+import AsyncStorage from '@react-native-community/async-storage';
 const { width, height } = Dimensions.get('window')
 
 
@@ -17,8 +17,14 @@ export default class App extends React.Component {
         super(props);
         this.state = {
             ItemSelector: '',
-            date: "12-08-2020",
+            date: "12-08-2020", cartCount: 0
         };
+    }
+    async componentDidMount() {
+        const existingCart = await AsyncStorage.getItem('cart');
+        this.setState({
+            cartCount: JSON.parse(existingCart).length
+        });
     }
     setDate(newDate) {
         this.setState({ chosenDate: newDate });
@@ -31,10 +37,15 @@ export default class App extends React.Component {
                     <Text style={[styles.TitleText, { marginLeft: width * .03, fontSize: 22 }]}>Make An Appoinment</Text>
                     <TouchableOpacity onPress={() => this.props.navigation.navigate('CartPage')}>
                         <Icon name='cart' size={40} type='material-community' color='#343434' />
+                        {this.state.cartCount != 0 ?
+                            /* {this.state.cartCount = 0 ? */
+                            <Badge value={this.state.cartCount} status="error" containerStyle={{ position: 'absolute', top: -1, right: -1 }} />
+                            : null
+                        }
                     </TouchableOpacity>
                 </View>
                 <View style={{ marginBottom: height * .15 }}>
-                    <ScrollView>
+                    <ScrollView showsVerticalScrollIndicator={false} style={{ backgroundColor: '#FFF' }}>
                         <View style={{ alignItems: 'center' }}>
                             <View style={styles.textInput}>
                                 <TextInput style={styles.textinputText}
@@ -80,7 +91,7 @@ export default class App extends React.Component {
                             </View>
                         </View>
                         <View style={{ flexDirection: 'row', marginLeft: width * .05 }}>
-                            <ScrollView horizontal>
+                            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                                 <TouchableOpacity style={[styles.textInput, { width: width * .25, alignItems: 'center' }]}>
                                     <Text>10.00</Text>
                                 </TouchableOpacity>
@@ -111,7 +122,7 @@ export default class App extends React.Component {
                             </View>
                         </View>
                         <View style={{ alignItems: 'center' }}>
-                            <TouchableOpacity onPress={() => this.props.navigation.navigate('BookingConfirm')} style={[styles.textInput, { alignItems: 'center', borderWidth: 0, backgroundColor: '#343434' }]}>
+                            <TouchableOpacity onPress={() => this.props.navigation.navigate('BookingConfirm')} style={[styles.textInput, { alignItems: 'center', borderWidth: 0, backgroundColor: '#FDC500', elevation: 3 }]}>
                                 <Text style={[styles.TextiputHeader, { color: 'rgba(255,255,255,1)' }]} >BOOK</Text>
                             </TouchableOpacity>
 

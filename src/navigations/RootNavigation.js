@@ -76,6 +76,19 @@ import biddingDetails from '../screens/biddingDetails';
 import example from '../screens/example';
 import forgotPass from '../screens/forgotPass';
 import splash from '../screens/splashScreen';
+import petSitter from '../screens/petSitter';
+import petSitterDetailsScreen from '../screens/petSitterDetailsScreen';
+import dogWalker from '../screens/dogWalker';
+import dogWalkerDetails from '../screens/dogWalkerDetails';
+import whishlist from '../screens/whishlist';
+import petSitterReview from '../screens/petSitterReview';
+import shipping from '../screens/shipping';
+import shippingForm from '../screens/shippingForm';
+import events from '../screens/events';
+import allEvents from '../screens/allEvents';
+import eventsDetails from '../screens/eventsDetails';
+import contactForm from '../screens/contactForm';
+import location from '../screens/locations';
 const { width, height } = Dimensions.get('window')
 
 const DrawerContent = (props) => (
@@ -94,14 +107,41 @@ const DrawerContent = (props) => (
                 <Image source={require('../assets/images/NameLogo.png')} style={{ width: width * .5, height: height * .1, marginBottom: height * .01, marginTop: height * .01, resizeMode: 'stretch' }} />
             </View>
         </View>
-        <View style={{ height: '65%' }}>
+        <View style={{ height: '55%' }}>
             <ScrollView>
                 <DrawerItems {...props} />
             </ScrollView>
-
         </View>
-
-        <View style={{ height: '15%', flexDirection: 'column-reverse' }}>
+        <View style={{ borderTopWidth: 1, borderColor: 'lightgray', height: '15%', flexDirection: 'row' }}>
+            <View style={{ width: 33, height: 33, borderRadius: 50, borderWidth: 1, borderColor: '#FDC500', alignItems: 'center', justifyContent: 'center', marginTop: width * .05, marginLeft: width * 0.05 }}>
+                <Icon name='phone' size={23} type='font-awesome' color='#FDC500' />
+            </View>
+            <View style={{ width: 33, height: 33, borderRadius: 50, borderWidth: 1, borderColor: '#FDC500', alignItems: 'center', justifyContent: 'center', marginTop: width * .05, marginLeft: width * 0.05 }}>
+                <Icon name='whatsapp' size={23} type='font-awesome' color='#FDC500' />
+            </View>
+            <View style={{ width: 33, height: 33, borderRadius: 50, borderWidth: 1, borderColor: '#FDC500', alignItems: 'center', justifyContent: 'center', marginTop: width * .05, marginLeft: width * 0.05 }}>
+                <Icon name='facebook' size={23} type='font-awesome' color='#FDC500' />
+            </View>
+            <View style={{ width: 33, height: 33, borderRadius: 50, borderWidth: 1, borderColor: '#FDC500', alignItems: 'center', justifyContent: 'center', marginTop: width * .05, marginLeft: width * 0.05 }}>
+                <Icon name='instagram' size={23} type='font-awesome' color='#FDC500' />
+            </View>
+            <View style={{ width: 33, height: 33, borderRadius: 50, borderWidth: 1, borderColor: '#FDC500', alignItems: 'center', justifyContent: 'center', marginTop: width * .05, marginLeft: width * 0.05 }}>
+                <Icon name='envelope-o' size={20} type='font-awesome' color='#FDC500' />
+            </View>
+        </View>
+        <View style={{ height: '5%', marginLeft: width * .05 }}>
+            <TouchableOpacity onPress={() => { props.navigation.navigate('LogOut') }} style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <Icon name='logout' size={25} type='material-community' color='rgba(0,0,0,.8)' />
+                <Text style={{
+                    fontFamily: 'Montserrat-Medium',
+                    fontSize: 16, fontWeight: 'normal', marginLeft: width * .1
+                }}>Logout</Text>
+            </TouchableOpacity>
+        </View>
+        <View style={{ backgroundColor: '#FDC500', alignItems: 'center', justifyContent: 'center', height: '5%' }}>
+            <Text style={{ fontSize: 15, fontFamily: 'Montserrat-Medium', color: '#FFF', marginLeft: width * 0.05 }}>MIMIANDBOWBOW</Text>
+        </View>
+        {/* <View style={{ height: '15%', flexDirection: 'column-reverse' }}>
             <View style={{ backgroundColor: 'rgba(0,0,0,0.7)', alignItems: 'center', justifyContent: 'center', height: height * 0.03 }}>
                 <Text style={{ fontSize: 15, fontFamily: 'Montserrat-Medium', color: 'rgba(255,255,255,0.3)', marginLeft: width * 0.05 }}>MIMIANDBOWBOW</Text>
             </View>
@@ -117,87 +157,26 @@ const DrawerContent = (props) => (
                     <View style={{ margin: 20, width: width * 0.1, height: width * 0.1, borderWidth: 1, borderColor: '#FDC500', borderRadius: width * .05, alignItems: 'center', justifyContent: 'center' }}>
                         <Icon name='instagram' size={20} type='fontisto' color='#FDC500' />
                     </View>
+                    <TouchableOpacity onPress={() => { props.navigation.navigate('LogOut') }} style={{ flexDirection: 'row', marginLeft: width * 0.05, height: '28%' }}>
+                        <Icon name='logout' size={30} type='material-community' color='rgba(0,0,0,1)' />
+                        <Text style={{ fontSize: 20, fontFamily: 'Montserrat-Medium', color: 'black', marginLeft: width * 0.05 }}>Logout</Text>
+                    </TouchableOpacity>
                 </View>
-                {/* <TouchableOpacity onPress={() => { props.navigation.navigate('LogOut') }} style={{ flexDirection: 'row', marginLeft: width * 0.05, height: '28%' }}>
-                    <Icon name='logout' size={30} type='material-community' color='rgba(0,0,0,1)' />
-                    <Text style={{ fontSize: 20, fontFamily: 'Montserrat-Medium', color: 'black', marginLeft: width * 0.05 }}>Logout</Text>
-                </TouchableOpacity> */}
-            </View>
-        </View>
+
+            </View> */}
+
+        {/* Logout: {
+        screen: logOut,
+        navigationOptions: {
+            drawerLabel: "Logout",
+            drawerIcon: () => (
+                <Icon name='logout' size={30} type='material-community' color='rgba(0,0,0,1)' />
+            )
+        },
+    }, */}
+        {/* </View> */}
     </View>
 )
-
-
-// class App extends React.Component {
-
-//     constructor() {
-//         super();
-//         this.state = {
-//             isVisible: true,
-//         }
-//     }
-//     static navigationOptions = {
-//         headerShown: false
-//     };
-//     Hide_Splash_Screen = () => {
-//         this.setState({
-//             isVisible: false
-//         });
-
-//         this.retrieveData()
-//     }
-//     async retrieveData() {
-//         try {
-
-//             const userData = await AsyncStorage.getItem('userData');
-
-//             if (userData !== null) {
-//                 const resetAction = StackActions.reset({
-//                     index: 0,
-//                     actions: [NavigationActions.navigate({ routeName: 'Home' })],
-//                 });
-//                 this.props.navigation.dispatch(resetAction);
-//             }
-//             else
-//                 this.props.navigation.push('Registration')
-//             //this.props.navigation.push('Home')
-//         } catch (error) {
-
-//         }
-//     }
-//     componentDidMount() {
-//         var that = this;
-//         setTimeout(function () {
-//             that.Hide_Splash_Screen();
-//         }, 2000);
-//     }
-//     //    componentWillUnmount() {
-//     //         this.onTokenRefreshListener();
-//     //         this.messageListener();
-//     //    }
-
-//     render() {
-
-//         return (
-
-//             <ImageBackground source={require('../assets/images//splash.png')} style={{ width: '100%', height: '100%', resizeMode: 'stretch' }}>
-//                 <StatusBar barStyle="dark-content" hidden={true} backgroundColor="rgba(255,255,255,1)" translucent={true} />
-//                 <View style={{ flex: 1, justifyContent: 'flex-end', width: width * .6, marginLeft: width * .2 }}>
-
-//                     <ProgressBar styleAttr="Horizontal" color="#343434" />
-//                     {/* <PacmanIndicator
-//                 count={5}
-//                 color='#FDC500'
-//                 animationDuration={600}
-//                 size={100}
-//               />  */}
-//                 </View>
-//             </ImageBackground>
-//         );
-//     }
-// };
-
-
 
 const StackNav = createStackNavigator({
     Home: { screen: home },
@@ -223,7 +202,20 @@ const StackNav = createStackNavigator({
     MemebershipAccountPayment: { screen: memebershipAccountPayment },
     BiddingList: { screen: biddingList },
     BiddingDetails: { screen: biddingDetails },
-    Example: { screen: example }
+    Example: { screen: example },
+    PetSitter: { screen: petSitter },
+    PetSitterDetailsScreen: { screen: petSitterDetailsScreen },
+    DogWalker: { screen: dogWalker },
+    DogWalkerDetails: { screen: dogWalkerDetails },
+    Wishlist: { screen: whishlist },
+    PetSitterReview: { screen: petSitterReview },
+    Shipping: { screen: shipping },
+    ShippingForm: { screen: shippingForm },
+    Events: { screen: events },
+    AllEvents: { screen: allEvents },
+    EventsDetails: { screen: eventsDetails },
+    Location: { screen: location }
+
 },
     { headerMode: 'none' }
 );
@@ -237,19 +229,19 @@ const TabNavigator = createBottomTabNavigator(
                 tabBarLabel: 'Pet List',
                 tabBarIcon: ({ focused }) => (
                     focused
-                        ? <Icon name='shopping-basket' size={30} type='material' color='#343434' style={{ padding: 7, borderRadius: 25, backgroundColor: '#FDC500' }} />
-                        : <Icon name='shopping-basket' size={30} type='material' color='#FDC500' />
+                        ? <Icon name='shopping-basket' size={30} type='material' color='#FDC500' style={{ padding: 7, borderRadius: 25, backgroundColor: '#343434' }} />
+                        : <Icon name='shopping-basket' size={30} type='material' color='#343434' />
                 )
             },
         },
-        Appoinment: {
-            screen: store,
+        Events: {
+            screen: events,
             navigationOptions: {
                 tabBarLabel: 'Appoinment',
                 tabBarIcon: ({ focused }) => (
                     focused
-                        ? <Icon name='event' size={30} type='material' color='#343434' style={{ padding: 7, borderRadius: 25, backgroundColor: '#FDC500' }} />
-                        : <Icon name='event' size={30} type='material' color='#FDC500' />
+                        ? <Icon name='event' size={30} type='material' color='#FDC500' style={{ padding: 7, borderRadius: 25, backgroundColor: '#343434' }} />
+                        : <Icon name='event' size={30} type='material' color='#343434' />
                 )
             },
         },
@@ -261,19 +253,19 @@ const TabNavigator = createBottomTabNavigator(
                 //     <Icon name='home' size={30} type='material-community' color='#FDC500' />,
                 tabBarIcon: ({ focused }) => (
                     focused
-                        ? <Icon name='home' size={30} type='material' color='#343434' style={{ padding: 7, borderRadius: 25, backgroundColor: '#FDC500' }} />
-                        : <Icon name='home' size={30} type='material' color='#FDC500' />
+                        ? <Icon name='home' size={30} type='material' color='#FDC500' style={{ padding: 7, borderRadius: 25, backgroundColor: '#343434' }} />
+                        : <Icon name='home' size={30} type='material' color='#343434' />
                 )
             },
         },
-        Store: {
-            screen: store,
+        Hostel: {
+            screen: location,
             navigationOptions: {
                 tabBarLabel: 'Store',
                 tabBarIcon: ({ focused }) => (
                     focused
-                        ? <Icon name='location-on' size={30} type='material' color='#343434' style={{ padding: 7, borderRadius: 25, backgroundColor: '#FDC500' }} />
-                        : <Icon name='location-on' size={30} type='material' color='#FDC500' />
+                        ? <Icon name='location-on' size={30} type='material' color='#FDC500' style={{ padding: 7, borderRadius: 25, backgroundColor: '#343434' }} />
+                        : <Icon name='location-on' size={30} type='material' color='#343434' />
                 )
             },
         },
@@ -283,8 +275,8 @@ const TabNavigator = createBottomTabNavigator(
                 tabBarLabel: 'Doctor',
                 tabBarIcon: ({ focused }) => (
                     focused
-                        ? <Icon name='local-hospital' size={30} type='material' color='#343434' style={{ padding: 7, borderRadius: 25, backgroundColor: '#FDC500' }} />
-                        : <Icon name='local-hospital' size={30} type='material' color='#FDC500' />
+                        ? <Icon name='local-hospital' size={30} type='material' color='#FDC500' style={{ padding: 7, borderRadius: 25, backgroundColor: '#343434' }} />
+                        : <Icon name='local-hospital' size={30} type='material' color='#343434' />
                 )
             },
         },
@@ -306,7 +298,7 @@ const TabNavigator = createBottomTabNavigator(
                 borderTopRightRadius: 20,
                 height: height * 0.09,
                 position: 'absolute',
-                backgroundColor: '#343434', justifyContent: 'center', alignItems: 'center'
+                backgroundColor: '#FDC500', justifyContent: 'center', alignItems: 'center'
             },
         },
     }
@@ -333,17 +325,17 @@ const MyDrawerNavigator = createDrawerNavigator({
             )
         },
     },
-    Bidding: {
-        screen: biddingList,
+    Whishlist: {
+        screen: whishlist,
         navigationOptions: {
-            drawerLabel: "Bidding",
+            drawerLabel: "Whishlist",
             drawerIcon: () => (
-                <Icon name='dollar' size={25} type='font-awesome' color='rgba(0,0,0,1)' />
+                <Icon name='heart' size={20} type='font-awesome' color='rgba(0,0,0,1)' />
             )
         },
     },
     Event: {
-        screen: store,
+        screen: events,
         navigationOptions: {
             drawerLabel: "Event",
             drawerIcon: () => (
@@ -352,7 +344,7 @@ const MyDrawerNavigator = createDrawerNavigator({
         },
     },
     Hostel: {
-        screen: store,
+        screen: location,
         navigationOptions: {
             drawerLabel: "Hostel",
             drawerIcon: () => (
@@ -365,7 +357,7 @@ const MyDrawerNavigator = createDrawerNavigator({
         navigationOptions: {
             drawerLabel: "Doctor",
             drawerIcon: () => (
-                <Icon name='hospital-box' size={25} type='material-community' color='rgba(0,0,0,1)' />
+                <Icon name='hospital-box' size={20} type='material-community' color='rgba(0,0,0,1)' />
             )
         },
     },
@@ -378,12 +370,12 @@ const MyDrawerNavigator = createDrawerNavigator({
             )
         },
     },
-    Logout: {
-        screen: logOut,
+    Contact: {
+        screen: contactForm,
         navigationOptions: {
-            drawerLabel: "Logout",
+            drawerLabel: "Contact Us",
             drawerIcon: () => (
-                <Icon name='logout' size={30} type='material-community' color='rgba(0,0,0,1)' />
+                <Icon name='contact-mail' size={25} type='material' color='rgba(0,0,0,1)' />
             )
         },
     },

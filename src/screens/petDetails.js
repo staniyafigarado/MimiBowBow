@@ -1,12 +1,13 @@
 import React from 'react';
-import { Text, View, Dimensions, Image, Alert, Modal, ImageBackground, Button } from 'react-native';
+import { Text, View, Dimensions, Image, Alert, Modal, ImageBackground, Button, ToastAndroid } from 'react-native';
 import SearchBar from 'react-native-search-bar';
 import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
-import { Icon } from 'react-native-elements';
+import { Icon, Badge } from 'react-native-elements';
 import { Rating, AirbnbRating } from 'react-native-ratings';
 import styles from '../styles/styles';
 import WooCommerce from '../utils/wooApi';
-import AsyncStorage from '@react-native-community/async-storage'
+import AsyncStorage from '@react-native-community/async-storage';
+import Share from 'react-native-share';
 import {
     BallIndicator,
     BarIndicator,
@@ -31,16 +32,29 @@ export default class App extends React.Component {
             productData: [],
             cartData: [],
             btnValue: 1,
-            isVisible: false,Userid:''
+            isVisible: false, Userid: '', productId: '', loginData: [], shareKey: '', data: [], cartCount: 0, description: ''
         };
     }
     componentDidMount = async () => {
         //   const Userid = await AsyncStorage.getItem('user_id');
-          AsyncStorage.getItem('user_id').then((value) => this.setState({ 'userid': value }))
+        try {
+            let data = await AsyncStorage.getItem('loginDetails');
+            console.log('Data 100', data);
+            if (data !== null) {
+                this.setState({ loginData: JSON.parse(data) });
+            }
+        } catch (error) {
+            console.log('Something went wrong', error);
+        }
+        AsyncStorage.getItem('user_id').then((value) => this.setState({ 'userid': value }))
+
         const { navigation } = this.props;
         const petData = navigation.getParam('petData', 'Null');
-
-
+        console.log(JSON.stringify(petData.id))
+        this.setState({ productId: petData.id });
+        const regex = /(<([^>]+)>)/ig;
+        const result = petData.description.replace(regex, '');
+        this.setState({ description: result })
         WooCommerce.get('products').then(response => {
             this.setState({
                 productData: petData,
@@ -49,7 +63,44 @@ export default class App extends React.Component {
         }).catch(error => {
             console.log(error + "123");
         });
+        const existingCart = await AsyncStorage.getItem('cart');
+        this.setState({
+            cartCount: JSON.parse(existingCart).length
+        });
+        this.getShareKey();
     }
+
+    getShareKey() {
+        return fetch('https://mimiandbowbow.com/alpha/wp-json/wc/v3/wishlist/get_by_user/' + this.state.loginData.user_id + '?consumer_key=ck_3dc8e609d9bf166cc09293bf3ebdb6a0c19bb46d&consumer_secret=cs_18122b00e28ea61f7560e0d0e16ad4075aa8f326')
+            .then((response) => response.json())
+            .then((json) => {
+                console.log(JSON.stringify(json));
+                this.setState({ shareKey: json[0]["share_key"] })
+                console.log(json[0]["share_key"])
+            })
+            .catch((error) => {
+                console.error(error);
+            });
+    }
+
+    addToWhishlist() {
+        const data = new FormData()
+        data.append('product_id', this.state.productId)
+        return fetch('https://mimiandbowbow.com/alpha/wp-json/wc/v3/wishlist/' + this.state.shareKey + '/add_product?consumer_key=ck_3dc8e609d9bf166cc09293bf3ebdb6a0c19bb46d&consumer_secret=cs_18122b00e28ea61f7560e0d0e16ad4075aa8f326', {
+            method: 'POST',
+            body: data,
+        })
+            .then(response => response.text())
+            .then(result => {
+                console.log(result)
+                ToastAndroid.show("Item Added to whishlist", ToastAndroid.SHORT);
+            })
+
+            .catch(error => {
+                console.error(error)
+            })
+    }
+
     addToCart = async (item) => {
         const existingCart = await AsyncStorage.getItem('cart')
         //console.log(item)
@@ -105,14 +156,39 @@ export default class App extends React.Component {
             isVisible: false
         });
     }
+    addingItemToCart() {
+        const data = new FormData()
+        data.append('product_id', this.state.productId)
+        return fetch('https://mimiandbowbow.com/alpha/wp-json/cocart/v1/add-item?id=' + this.state.loginData.user_id, {
+            method: 'POST',
+            body: data,
+        })
+            .then(response => response.text())
+            .then(result => console.log(result))
+
+            .catch(error => {
+                console.error(error)
+            })
+    }
+    sharing = () => {
+        const shareOptions = {
+            title: 'MimiandBowbow',
+            message: "Find your favorate pets with mimi and bow",
+            url: this.state.productData.permalink
+        };
+
+        Share.open(shareOptions)
+            .then((res) => { console.log(res) })
+            .catch((err) => { err && console.log(err); });
+    }
     render() {
-        
+
         if (this.state.isLoading) {
             return (
-                <View style={{ flex: 1, backgroundColor: '#f5c711' }}>
+                <View style={{ flex: 1, backgroundColor: '#FFF' }}>
                     <PacmanIndicator
                         count={5}
-                        color='black'
+                        color='#343434'
                         animationDuration={600}
                         size={100}
                     />
@@ -137,22 +213,35 @@ export default class App extends React.Component {
 					</Text>
                         <TouchableOpacity onPress={() => this.props.navigation.navigate('CartPage')}>
                             <Icon name='cart' size={40} type='material-community' color='#343434' />
+                            {this.state.cartCount != 0 ?
+                                /* {this.state.cartCount = 0 ? */
+                                <Badge value={this.state.cartCount} status="error" containerStyle={{ position: 'absolute', top: -1, right: -1 }} />
+                                : null
+                            }
                         </TouchableOpacity>
                     </View>
-                  
-                    <View style={{ flexDirection: 'row', marginLeft: width * .05, alignItems: 'center' }}>
-                        <View>
-                            <Text style={[styles.TitleText, { color: 'rgba(255,255,255,1)', width: width * .7 }]}>{this.state.productData.name}</Text>
-                            <Text style={{ fontFamily: 'Montserrat-Medium', fontSize: 12, color: 'rgba(255,255,255,1)' }}>Lorem ipsum dolor sit amet, consetetur sadipscing</Text>
+                    <ScrollView style={{ backgroundColor: '#FFF', marginBottom: 20 }} showsVerticalScrollIndicator={false}>
+                        <View style={{ flexDirection: 'row', marginHorizontal: width * .05, alignItems: 'center' }}>
+                            <View style={{ width: '75%' }}>
+                                <Text style={[styles.TitleText, { color: '#343434', }]}>{this.state.productData.name}</Text>
+                                <Text style={{ fontFamily: 'Montserrat-Medium', fontSize: 12, color: '#343434' }}>Lorem ipsum dolor sit amet, consetetur sadipscing</Text>
+                            </View>
+                            {/* {/* <Icon name='share-variant' size={25} type='material-community' color='#343434' margin={20} /> */}
+                            <View style={{ width: '25%', justifyContent: 'space-between', flexDirection: 'row' }}>
+                                <TouchableOpacity onPress={() => this.addToWhishlist()}>
+                                    <Icon name='heart' size={25} type='material-community' color='#343434' />
+                                </TouchableOpacity>
+                                <TouchableOpacity onPress={() => this.sharing()}>
+                                    <Icon name='share-variant' size={25} type='material-community' color='#343434' />
+                                </TouchableOpacity>
+                            </View>
                         </View>
-                        <Icon name='share-variant' size={25} type='material-community' color='rgba(255,255,255,1)' margin={20} />
-                    </View>
-                    
-                    <ScrollView>
-                        <View style={{ borderRadius: 5, width: width * .9, margin: width * .05, height: height * .7 }}>
+
+
+                        <View style={{ borderRadius: 5, width: width * .9, margin: width * .05, height: height * .7, elevation: 7 }}>
                             <Image
                                 source={{ uri: this.state.productData.images[0] ? this.state.productData.images[0].src : "https://www.aiimsnagpur.edu.in/sites/default/files/inline-images/no-image-icon_27.png" }}
-                                style={{ width: width * .9, height: height * .35, borderRadius: 2, resizeMode: 'stretch' }}
+                                style={{ width: width * .9, height: height * .4, borderRadius: 2, resizeMode: 'stretch' }}
                             />
                             <View style={{ height: height * .35, backgroundColor: 'rgba(255,255,255,1)', padding: width * .05 }}>
                                 <Text style={{ fontSize: 23, fontFamily: 'Montserrat-Medium' }}>Price : ₹{this.state.productData.price}‎ </Text>
@@ -162,13 +251,13 @@ export default class App extends React.Component {
                                     <Text style={{ fontFamily: 'Montserrat-Regular', fontSize: 12 }}>({this.state.productData.rating_count} reviews)</Text>
                                 </View>
                                 <Text style={{ fontFamily: 'Montserrat-Regular', color: 'rgba(0,0,0,1)' }}>Description</Text>
-                                <Text style={{ fontFamily: 'Montserrat-Regular', fontSize: 11, color: 'rgba(0,0,0,.7)' }} numberOfLines={2}>{this.state.productData.description}</Text>
+                                <Text style={{ fontFamily: 'Montserrat-Regular', fontSize: 11, color: 'rgba(0,0,0,.7)' }} numberOfLines={2}>{this.state.description}</Text>
                                 {this.state.btnValue === 1 ?
-                                    <TouchableOpacity onPress={() => this.addToCart(this.state.productData)} style={{ width: width * .8, marginTop: width * .05, alignItems: 'center', justifyContent: 'center', backgroundColor: '#343434', height: height * 0.08, borderRadius: 3 }}>
+                                    <TouchableOpacity onPress={() => { this.addToCart(this.state.productData); this.addingItemToCart(); }} style={{ width: width * .8, marginTop: width * .05, alignItems: 'center', justifyContent: 'center', backgroundColor: '#FDC500', height: height * 0.08, borderRadius: 3, elevation: 3 }}>
                                         <Text style={[styles.TextiputHeader, { color: 'rgba(255,255,255,1)' }]}>ADD TO CART</Text>
                                     </TouchableOpacity>
                                     :
-                                    <TouchableOpacity onPress={() => this.props.navigation.navigate('CartPage')} style={{ width: width * .8, marginTop: width * .05, alignItems: 'center', justifyContent: 'center', backgroundColor: '#343434', height: height * 0.08, borderRadius: 3 }}>
+                                    <TouchableOpacity onPress={() => this.props.navigation.navigate('CartPage')} style={{ width: width * .8, marginTop: width * .05, alignItems: 'center', justifyContent: 'center', backgroundColor: '#FDC500', height: height * 0.08, borderRadius: 3, elevation: 3 }}>
                                         <Text style={[styles.TextiputHeader, { color: 'rgba(255,255,255,1)' }]}>GO TO CART</Text>
                                     </TouchableOpacity>
                                 }

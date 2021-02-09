@@ -32,7 +32,7 @@ export default class App extends React.Component {
             isLoading: true,
             gridView: true,
             selectedCategory: '',
-            dataSource: [], isSelected: true,
+            dataSource: [], isSelected: true, cartCount: 0
         };
         this.arrayholder = []
     }
@@ -91,41 +91,151 @@ export default class App extends React.Component {
     //     });
     // }
     componentDidMount = async () => {
+        this.categoryValueGet();
+        const existingCart = await AsyncStorage.getItem('cart');
+        this.setState({
+            cartCount: JSON.parse(existingCart).length
+        });
+    }
+    categoryValueGet = () => {
         const { navigation } = this.props;
         const categoryValue = navigation.getParam('categoryValue', 'Dogs');
         console.log(categoryValue);
-        WooCommerce.get('products?per_page=100', { per_page: 100 }).then(response => {
-            console.log(response.data + "123");
+        if (categoryValue == 'Dogs') {
+            this.Dog();
+        } else if (categoryValue == 'Cat') {
+            this.Cat();
+        } else if (categoryValue == 'Fish') {
+            this.Fish();
+        } else if (categoryValue == 'Small Pet') {
+            this.SmallPet();
+        } else if (categoryValue == 'Bird') {
+            this.Bird();
+        } else if (categoryValue == 'Plants') {
+            this.Plants();
+        } else {
+            console.log("nothing")
+        }
+    }
+    categoryChange = (value) => {
+        this.setState({
+            selectedCategory: value
+        })
+        // alert(value)
+        switch (value) {
+            case 'Dogs':
+                this.setState({ isLoading: true })
+                this.Dog();
+                break;
+
+            case 'Cat':
+                this.setState({ isLoading: true })
+                this.Cat();
+                break;
+
+            case 'Fish':
+                this.setState({ isLoading: true })
+                this.Fish();
+                break;
+            case 'Small Pet':
+                this.setState({ isLoading: true })
+                this.SmallPet();
+                break;
+            case 'Bird':
+                this.setState({ isLoading: true })
+                this.Bird();
+                break;
+            case 'Plants':
+                this.setState({ isLoading: true })
+                this.Plants();
+                break;
+            default:
+                this.Dog();
+                console.log("NUMBER NOT FOUND");
+
+        }
+    }
+
+    Dog = () => {
+        WooCommerce.get('products?category=33&per_page=100', { per_page: 100 }).then(response => {
+            console.log(response.data + "Dogs");
             this.setState({
                 dataSource: response.data,
                 isLoading: false,
-                selectedCategory: categoryValue
             });
             this.arrayholder = response.data;
         }).catch(error => {
             console.log(error + "123");
         });
         console.log(this.state.dataSource + "Hi")
-        // WooCommerce.get('products')
-        //     .then(data => {
-        //         console.log("gjnhmh", data);
-        //         this.setState({
-        //             data: data
-        //         })
-        //     })
-        //     .catch(error => {
-        //         console.log(error);
-        //     });
-        const existingCart = await AsyncStorage.getItem('cart');
-        this.setState({
-            cartCount: JSON.parse(existingCart).length
+    }
+
+    Cat = () => {
+        WooCommerce.get('products?category=173&per_page=100', { per_page: 100 }).then(response => {
+            console.log(response.data + "Cat");
+            this.setState({
+                dataSource: response.data,
+                isLoading: false,
+            });
+            this.arrayholder = response.data;
+        }).catch(error => {
+            console.log(error + "123");
         });
+        console.log(this.state.dataSource + "Hi")
     }
-    categoryChange = (value) => {
-        this.setState({
-            selectedCategory: value
-        })
+    Fish = () => {
+        WooCommerce.get('products?category=36&per_page=100', { per_page: 100 }).then(response => {
+            console.log(response.data + "Fish");
+            this.setState({
+                dataSource: response.data,
+                isLoading: false,
+            });
+            this.arrayholder = response.data;
+        }).catch(error => {
+            console.log(error + "123");
+        });
+        console.log(this.state.dataSource + "Hi")
     }
+    SmallPet = () => {
+        WooCommerce.get('products?category=175&per_page=100', { per_page: 100 }).then(response => {
+            console.log(response.data + "123");
+            this.setState({
+                dataSource: response.data,
+                isLoading: false,
+            });
+            this.arrayholder = response.data;
+        }).catch(error => {
+            console.log(error + "123");
+        });
+        console.log(this.state.dataSource + "Hi")
+    }
+    Bird = () => {
+        WooCommerce.get('products?category=174&per_page=100', { per_page: 100 }).then(response => {
+            console.log(response.data + "123");
+            this.setState({
+                dataSource: response.data,
+                isLoading: false,
+            });
+            this.arrayholder = response.data;
+        }).catch(error => {
+            console.log(error + "123");
+        });
+        console.log(this.state.dataSource + "Hi")
+    }
+    Plants = () => {
+        WooCommerce.get('products?category=191&per_page=100', { per_page: 100 }).then(response => {
+            console.log(response.data + "123");
+            this.setState({
+                dataSource: response.data,
+                isLoading: false,
+            });
+            this.arrayholder = response.data;
+        }).catch(error => {
+            console.log(error + "123");
+        });
+        console.log(this.state.dataSource + "Hi")
+    }
+
     viewType = (value) => {
         if (value === 2) {
             this.setState({
@@ -219,10 +329,10 @@ export default class App extends React.Component {
     render() {
         if (this.state.isLoading) {
             return (
-                <View style={{ flex: 1, backgroundColor: '#f5c711' }}>
+                <View style={{ flex: 1, backgroundColor: '#FFF' }}>
                     <PacmanIndicator
                         count={5}
-                        color='black'
+                        color='#343434'
                         animationDuration={600}
                         size={100}
                     />
@@ -230,7 +340,7 @@ export default class App extends React.Component {
             );
         }
         return (
-            <View style={{ flex: 1, backgroundColor: '#f5c711' }}>
+            <View style={{ flex: 1, backgroundColor: '#FDC500' }}>
                 <View style={{ flexDirection: 'row', height: height * .1, alignItems: 'center', justifyContent: 'space-between', margin: width * .05 }}>
                     <TouchableOpacity
                         onPress={() => { this.props.navigation.toggleDrawer(); }}
@@ -269,9 +379,9 @@ export default class App extends React.Component {
                     />
                 </View>
                 {/* categories */}
-                <ScrollView showsVerticalScrollIndicator={false}>
+                <ScrollView showsVerticalScrollIndicator={false} style={{ backgroundColor: "#FFF" }}>
                     <View style={{ flexDirection: 'row', height: height * .1, alignItems: 'center', justifyContent: 'space-between', marginLeft: width * .05, marginRight: width * .05 }}>
-                        <Text style={[styles.TitleText, { color: 'rgba(255,255,255,1)' }]}>Categories</Text>
+                        <Text style={[styles.TitleText]}>Categories</Text>
                         {/* <Icon name='arrow-right' size={30} type='material-community' color='white' onPress={() => this.props.navigation.navigate('Categories')} /> */}
                     </View>
                     <View style={{ flexDirection: 'row', marginLeft: width * .025 }}>
@@ -282,7 +392,7 @@ export default class App extends React.Component {
                             data={DataArray}
                             renderItem={({ item, index }) => (
                                 <TouchableOpacity onPress={() => { this.categoryChange(item.value); }} style={{ marginLeft: width * .025, marginRight: 0, margin: width * .025, alignItems: 'center' }}>
-                                    <View style={[styles.homeCategoryViewSmall, { backgroundColor: item.name == this.state.selectedCategory ? '#C49500' : 'rgba(255,255,255,1)' }]}>
+                                    <View style={[styles.homeCategoryViewSmall, { backgroundColor: item.name == this.state.selectedCategory ? '#FDC500' : '#FFFFFF' }]}>
                                         <Image
                                             source={{ uri: item.image }}
                                             style={styles.homeCategoryImageSmall}
@@ -305,18 +415,19 @@ export default class App extends React.Component {
                         {/* <Icon name='arrow-right' size={30} type='material-community' color='#343434' /> */}
                     </View>
                     {/* pet list */}
-                    {this.state.isSelected ? <View>
-                        <FlatList
-                            style={{ marginBottom: height * .1 }}
-                            keyExtractor={(item, index) => index}
-                            numColumns={this.state.gridView ? 2 : 1}
-                            data={this.state.dataSource.filter(item => {
-                                return item.categories[0].name === this.state.selectedCategory;
-                            })}
-                            extraData={this.state}
-                            renderItem={this.renderItemGrid}
-                        />
-                    </View> : <View>
+                    {/* {this.state.isSelected ? <View> */}
+                    <FlatList
+                        style={{ marginBottom: height * .1 }}
+                        keyExtractor={(item, index) => index}
+                        numColumns={this.state.gridView ? 2 : 1}
+                        // data={this.state.dataSource.filter(item => {
+                        //     return item.categories[0].name === this.state.selectedCategory;
+                        // })}
+                        data={this.state.dataSource}
+                        extraData={this.state}
+                        renderItem={this.renderItemGrid}
+                    />
+                    {/* </View> : <View>
                             <FlatList
                                 style={{ marginBottom: height * .1 }}
                                 keyExtractor={(item, index) => index}
@@ -327,7 +438,7 @@ export default class App extends React.Component {
                                 extraData={this.state}
                                 renderItem={this.renderItemList}
                             />
-                        </View>}
+                        </View>} */}
 
                 </ScrollView>
             </View>

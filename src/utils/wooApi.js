@@ -5,8 +5,8 @@ import WooCommerceAPI from 'react-native-wc-api';
 
 const WooCommerce = new WooCommerceAPI({
   url: 'https://mimiandbowbow.com/alpha/',  //Url
-  consumerKey: 'ck_3dc8e609d9bf166cc09293bf3ebdb6a0c19bb46d',   //Your Consumer Key
-  consumerSecret: 'cs_18122b00e28ea61f7560e0d0e16ad4075aa8f326',  //Your Consumer Secret
+  consumerKey: 'ck_f298e34b10cb5f26ac250e147fac9e3f48f49be1',   //Your Consumer Key
+  consumerSecret: 'cs_6b4cdab6910a20fea50c1e8d8b1af5e1caa5418b',  //Your Consumer Secret
   wpAPI: true,
   version: 'wc/v3',
   queryStringAuth: true,

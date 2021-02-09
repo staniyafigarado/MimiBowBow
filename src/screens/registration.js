@@ -250,7 +250,7 @@
 // }
 
 import React, { Component } from 'react';
-import { Text, View, Dimensions, Image, TextInput, BackHandler, ImageBackground, StatusBar, Alert } from 'react-native';
+import { Text, View, Dimensions, Image, TextInput, BackHandler, ImageBackground, StatusBar, Alert, ToastAndroid } from 'react-native';
 import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
 import { Icon } from 'react-native-elements';
 import styles from '../styles/styles';
@@ -298,8 +298,8 @@ export default class App extends Component {
 
     _configureGoogleSignIn() {
         GoogleSignin.configure({
-            ClientId: '522544017492-hqmtlkf1dggp9tmaste8nmc3j5dimoft.apps.googleusercontent.com',
-            scopes: ['https://www.googleapis.com/auth/drive.readonly'],
+            ClientId: '900564283022-nd6mh0vi9b8d1r39n1uog1m4aid4sdcu.apps.googleusercontent.com',
+            scopes: ['openid'],
             shouldFetchBasicProfile: true,
         });
         // this._isSignedIn();
@@ -380,8 +380,8 @@ export default class App extends Component {
                     });
                     // AsyncStorage.setItem('user_id', this.state.userInfo.email);
                     AsyncStorage.setItem('profile', this.state.profile);
-                    AsyncStorage.setItem('username', this.state.username);
-                    AsyncStorage.setItem('email', this.state.email);
+                    // AsyncStorage.setItem('username', this.state.username);
+                    // AsyncStorage.setItem('email', this.state.email);
                     console.log('result:', user);
                     // this.props.navigation.navigate('Home');
                     // this.getWPnonce();
@@ -402,7 +402,7 @@ export default class App extends Component {
                 if (login.isCancelled) {
                     console.log('Login cancelled');
                 } else {
-                    alert('Login was successful with permissions: ' + login.grantedPermissions.toString());
+                    // alert('Login was successful with permissions: ' + login.grantedPermissions.toString());
                     AccessToken.getCurrentAccessToken().then(data => {
                         const accessToken = data.accessToken.toString();
                         this.getInfoFromToken(accessToken);
@@ -438,22 +438,128 @@ export default class App extends Component {
     //             console.log("j n,mlkm", error.response)
     //         });
     // }
+    // handleSubmit = () => {
+    //     WooCommerce.post('customers', {
+    //         email: this.state.email,
+    //         username: this.state.username,
+    //     })
+    //         .then(data => {
+    //             console.log(JSON.stringify(data));
+    //             // AsyncStorage.setItem('user', JSON.stringify(data.data.id));
+    //             // this.props.navigation.navigate("Home");
+    //             if (!data.username) {
+    //                 alert(data.message)
+    //             }
+    //             else {
+    //                 ToastAndroid.show("Successfull", ToastAndroid.SHORT);
+    //                 // this.props.navigation.navigate("Login");
+    //                 alert("Check your email for user name and password")
+    //             }
+    //         })
+    //         .catch(error => {
+    //             console.log(error);
+    //             alert('User already exist')
+    //         });
+    // }
     handleSubmit = () => {
-        WooCommerce.post('customers', {
-            email: this.state.email,
-            username: this.state.username,
-            password: this.state.password
-        })
-            .then(data => {
-                console.log(data.data);
-                AsyncStorage.setItem('user', JSON.stringify(data.data.id));
-                this.props.navigation.navigate("Home");
+        // fetch("https://mimiandbowbow.com/alpha/wp-json/wc/v3/customers?consumer_key=ck_3dc8e609d9bf166cc09293bf3ebdb6a0c19bb46d&consumer_secret=cs_18122b00e28ea61f7560e0d0e16ad4075aa8f326&email=" + this.state.email + "&username=" + this.state.username, {
+        //     method: 'POST',
+        //     headers: new Headers({
+        //         "X-Shopify-Storefont-Access-Token": "18e4894f164b996610cbcb4f8690b6be",
+        //         "Accept": "application/json",
+        //         "Content-Type": "application/json"
+        //     }),
+        //     body: {
+        //         "email": this.state.email,
+        //         "username": this.state.username,
+        //         "password": this.state.password
+        //     }
+
+        // }).then((response) => response.json())
+        //     .then((responseJson) => {
+        //         console.log(responseJson)
+        //         if (!responseJson.username) {
+        //             alert(responseJson.message)
+        //         } if (responseJson.code == "registration-error-email-exists") {
+        //             alert(responseJson.code)
+        //         }
+        //         else {
+        //             ToastAndroid.show("Successfull", ToastAndroid.SHORT);
+        //             this.props.navigation.navigate("Home");
+        //             // alert("Check your email for user name and password")
+        //         }
+        //     })
+        //     .catch((error) => {
+        //         console.error(error);
+        //     });
+
+        var myHeaders = new Headers();
+        myHeaders.append("X-Shopify-Storefont-Access-Token", "18e4894f164b996610cbcb4f8690b6be");
+        myHeaders.append("Accept", "application/json");
+        myHeaders.append("Content-Type", "application/json");
+        var raw = JSON.stringify({
+            "email": this.state.email,
+            "username": this.state.username,
+            "password": this.state.email
+        });
+
+        var requestOptions = {
+            method: 'POST',
+            headers: myHeaders,
+            body: raw,
+        };
+
+        fetch("https://mimiandbowbow.com/alpha/wp-json/wc/v3/customers?consumer_key=ck_3dc8e609d9bf166cc09293bf3ebdb6a0c19bb46d&consumer_secret=cs_18122b00e28ea61f7560e0d0e16ad4075aa8f326", requestOptions)
+            .then(response => response.json())
+            .then(responseJson => {
+                console.log(responseJson)
+                if (responseJson.code == "registration-error-email-exists") {
+                    this.insertData();
+
+                }
+                else {
+                    // ToastAndroid.show("Successfull", ToastAndroid.SHORT);
+                    this.insertData();
+                }
             })
-            .catch(error => {
-                console.log(error);
-                alert('User already exist')
+            .catch(error => console.log('error', error));
+    }
+    insertData() {
+        axios.post('https://mimiandbowbow.com/alpha/wp-json/simple-jwt-authentication/v1/token?username=' + this.state.email + '&password=' + this.state.email)
+
+            .then(res => {
+                const data = res.data;
+                console.log(data);
+                let userDets = {
+                    username: res.data.user_nicename,
+                    email: res.data.user_email,
+                    // displayname: response.data.user_display_name
+                };
+                // alert('Scucessfully signed in with email ' + userDets.email);
+                ToastAndroid.show("Success", ToastAndroid.SHORT);
+                this.props.navigation.navigate("Home");
+                // AsyncStorage.setItem('user_id', res.data.user_id);
+                // AsyncStorage.setItem('username', res.data.username);
+                this.saveToStorage(data)
+            }).catch(error => {
+                // alert("Something went wrong, Check your email and password.")
+                // ToastAndroid.show("Something went wrong, Check your email and password", ToastAndroid.SHORT);
+                ToastAndroid.show("Email already exist", ToastAndroid.SHORT);
+                console.log(error.message)
             });
     }
+
+    async saveToStorage(data) {
+        if (data) {
+            console.log("async", data);
+            await AsyncStorage.setItem('loginDetails', JSON.stringify(data)
+            ); console.log(data)
+            return true;
+        }
+
+        return false;
+    }
+
     render() {
         const isLogin = this.state.userInfo.name;
         const buttonText = isLogin ? 'Logout With Facebook' : 'Login From Facebook';
@@ -479,7 +585,7 @@ export default class App extends Component {
             //     )}
             // </View>
             <ImageBackground source={require('../assets/images/SignUpBkGrnd.png')} style={{ width: '100%', height: '100%', resizeMode: 'stretch' }}>
-                <StatusBar barStyle="dark-content" hidden={true} backgroundColor="rgba(255,255,255,1)" translucent={true} />
+                <StatusBar barStyle="dark-content" hidden={true} backgroundColor="#FDC500" translucent={true} />
                 <View style={{ height: height * .4, marginLeft: width * .05, paddingTop: height * .1 }}>
                     <Text style={[styles.TitleText, { color: 'rgba(255,255,255,1)' }]} >Sign Up</Text>
                 </View>
@@ -487,7 +593,7 @@ export default class App extends Component {
                 <View style={{ alignItems: 'center' }}>
                     <TouchableOpacity
                         onPress={() => this.GoogleSignin()}
-                        style={[styles.roundButton, { justifyContent: 'flex-start', paddingLeft: width * .05, backgroundColor: '#343434', }]}>
+                        style={[styles.roundButton, { justifyContent: 'flex-start', paddingLeft: width * .05, backgroundColor: '#FDC500', }]}>
                         <Icon name='google' size={30} type='material-community' color='rgba(255,255,255,1)' />
                         <Text style={[styles.TextiputHeader, { color: 'rgba(255,255,255,1)', fontSize: 13, paddingLeft: width * .1 }]} >CONTINUE WITH GOOGLE</Text>
                     </TouchableOpacity>
@@ -495,8 +601,8 @@ export default class App extends Component {
                 </View>
                 <View style={{ alignItems: 'center' }}>
                     <TouchableOpacity onPress={() => this.props.navigation.navigate('UserReg')} style={[styles.roundButton, { justifyContent: 'flex-start', paddingLeft: width * .05, borderWidth: 2, borderColor: '#FDC500', }]}>
-                        <Icon name='email' size={30} type='material' color='#343434' />
-                        <Text style={[styles.TextiputHeader, { color: '#343434', fontSize: 13, paddingLeft: width * .1 }]} >CONTINUE WITH EMAIL</Text>
+                        <Icon name='email' size={30} type='material' color='#FDC500' />
+                        <Text style={[styles.TextiputHeader, { color: '#FDC500', fontSize: 13, paddingLeft: width * .1 }]} >CONTINUE WITH EMAIL</Text>
                     </TouchableOpacity>
 
                 </View>
@@ -524,9 +630,9 @@ export default class App extends Component {
                     </View>
                 </View>
                 <View style={{ justifyContent: 'center', alignItems: 'baseline', flexDirection: 'row' }}>
-                    <Text style={{ fontFamily: 'Montserrat-Regular', color: 'rgba(0,0,0,.7)', fontSize: 14 }} >Already Have an Account?</Text>
+                    <Text style={{ fontFamily: 'Montserrat-Regular', color: '#343434', fontSize: 14 }} >Already Have an Account?</Text>
                     <TouchableOpacity onPress={() => this.props.navigation.navigate('Login')} >
-                        <Text style={{ fontFamily: 'Montserrat-Bold', color: 'rgba(255,255,255,1)', fontSize: 17 }} > SignIn</Text>
+                        <Text style={{ fontFamily: 'Montserrat-Bold', color: '#FDC500', fontSize: 17 }} > SignIn</Text>
                     </TouchableOpacity>
 
                 </View>

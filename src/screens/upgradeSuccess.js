@@ -69,17 +69,19 @@ export default class App extends React.Component {
 
                     </TouchableOpacity>
                 </View>
-                <View style={{ height: height * .09, marginLeft: width * .05, marginRight: width * .05 }}>
-                    <Text style={[styles.TitleText, { color: '#343434', fontSize: 20, textAlign: 'center' }]}>Upgraded Successfully</Text>
-                </View>
-                <View style={{ alignItems: 'center' }}>
-                    <Image source={success} style={{ width: width * 1, height: height * 0.5 }}></Image>
-                    <View style={{ alignItems: 'center', paddingBottom: height * .025 }}>
-                        <TouchableOpacity
-                            onPress={() => this.props.navigation.navigate('Home')}
-                            style={{ width: width * .9, marginTop: width * .2, alignItems: 'center', justifyContent: 'center', backgroundColor: '#343434', height: height * 0.08, borderRadius: 3 }}>
-                            <Text style={[styles.TextiputHeader, { color: 'rgba(255,255,255,1)' }]}>GO TO HOMESCREEN</Text>
-                        </TouchableOpacity>
+                <View style={{ backgroundColor: '#FFF', width: '100%', height: '100%' }}>
+                    <View style={{ height: height * .09, marginLeft: width * .05, marginRight: width * .05, marginTop: 10 }}>
+                        <Text style={[styles.TitleText, { color: '#343434', fontSize: 20, textAlign: 'center' }]}>Upgraded Successfully</Text>
+                    </View>
+                    <View style={{ alignItems: 'center' }}>
+                        <Image source={success} style={{ width: width * 1, height: height * 0.5 }}></Image>
+                        <View style={{ alignItems: 'center', paddingBottom: height * .025 }}>
+                            <TouchableOpacity
+                                onPress={() => this.props.navigation.navigate('Home')}
+                                style={{ width: width * .9, marginTop: width * .2, alignItems: 'center', justifyContent: 'center', backgroundColor: '#FDC500', height: height * 0.08, borderRadius: 3, elevation: 3 }}>
+                                <Text style={[styles.TextiputHeader, { color: 'rgba(255,255,255,1)' }]}>GO TO HOMESCREEN</Text>
+                            </TouchableOpacity>
+                        </View>
                     </View>
                 </View>
             </View>

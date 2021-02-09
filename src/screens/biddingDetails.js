@@ -25,23 +25,28 @@ export default class App extends React.Component {
             productData: [],
             cartData: [],
             btnValue: 1,
-            isVisible: false,
+            isVisible: false, cartCount: 0
         };
     }
     componentDidMount = async () => {
         const { navigation } = this.props;
         const petData = navigation.getParam('petData', 'Null');
-
-
-        WooCommerce.get('products').then(response => {
+        WooCommerce.get('products?category=192&per_page=100', { per_page: 100 }).then(response => {
+            console.log(response.data + "123");
             this.setState({
-                productData: petData,
-                isLoading: false,
                 dataSource: response.data,
-                selectedCategory: 'Bidding'
+                isLoading: false,
+                selectedCategory: 'Bidding',
+                productData: petData
             });
+            this.arrayholder = response.data;
         }).catch(error => {
             console.log(error + "123");
+        });
+        console.log(this.state.dataSource + "Hi")
+        const existingCart = await AsyncStorage.getItem('cart');
+        this.setState({
+            cartCount: JSON.parse(existingCart).length
         });
     }
     addToCart = async (item) => {
@@ -142,10 +147,10 @@ export default class App extends React.Component {
     render() {
         if (this.state.isLoading) {
             return (
-                <View style={{ flex: 1, backgroundColor: '#f5c711' }}>
+                <View style={{ flex: 1, backgroundColor: '#FFF' }}>
                     <PacmanIndicator
                         count={5}
-                        color='black'
+                        color='#343434'
                         animationDuration={600}
                         size={100}
                     />
@@ -177,7 +182,7 @@ export default class App extends React.Component {
                             }
                         </TouchableOpacity>
                     </View>
-                    <ScrollView showsVerticalScrollIndicator={false} style={{ flex: 1 }}>
+                    <ScrollView showsVerticalScrollIndicator={false} style={{ flex: 1, backgroundColor: '#FFF' }}>
                         <View style={{ height: height * .55, width: '93%', backgroundColor: '#FFF', alignSelf: 'center', borderRadius: 10, padding: width * .03 }}>
                             <View style={{ height: height * .25, flexDirection: 'row', alignItems: 'center' }}>
                                 <Image source={{ uri: this.state.productData.images[0] ? this.state.productData.images[0].src : "https://www.aiimsnagpur.edu.in/sites/default/files/inline-images/no-image-icon_27.png" }}
@@ -201,19 +206,31 @@ export default class App extends React.Component {
                                         <Text style={{ fontFamily: 'Montserrat-Medium', fontSize: 14, color: '#00AE51' }}>₹{this.state.productData.price}</Text>
                                     </View>
                                     <View style={{ flexDirection: 'row', marginTop: height * .01 }}>
-                                        <View style={{
+                                        {/* <View style={{ borderWidth: 1, borderColor: '#DEDEDE', height: height * .05, justifyContent: 'center', width: width * .23, borderRadius: 10, alignItems: 'center', flexDirection: 'row' }}>
+                                            <Text style={{ color: '#00AE51', fontFamily: 'Montserrat-Regular', fontSize: 14 }}>₹</Text>
+                                            <TextInput placeholder={'000'}
+                                                style={{ fontFamily: 'Montserrat-Regular', fontSize: 12, width: width * .2 }}></TextInput>
+                                        </View> */}
+                                        <View style={{ borderWidth: 1, borderColor: '#DEDEDE', height: 35, borderRadius: 10, width: width * .23, flexDirection: 'row', alignItems: 'center' }}>
+                                            <Text style={{ color: '#00AE51', fontFamily: 'Montserrat-Regular', fontSize: 14 }}>₹</Text>
+                                            <TextInput placeholder={'000'}
+                                                keyboardType={'number-pad'}
+                                                style={{ fontFamily: 'Montserrat-Regular', fontSize: 12, top: 1, width: '80%' }}></TextInput>
+                                        </View>
+                                        {/* <View style={{
                                             borderColor: '#707070', borderWidth: 1, width: width * .23,
                                             borderRadius: 10, height: height * .05, flexDirection: 'row', alignItems: 'center', padding: 5, justifyContent: 'center'
                                         }}>
                                             <Text style={{ color: '#00AE51', fontFamily: 'Montserrat-Regular', fontSize: 14 }}>₹</Text>
                                             <TextInput
                                                 // underlineColorAndroid='rgba(0,0,0,0)'
+                                                placeholder={'000'}
                                                 underlineColor={'#FFF'}
-                                                style={{ height: height * .02, marginLeft: 5, backgroundColor: '#FFF' }}></TextInput>
-                                        </View>
+                                                style={{ height: height * .02, marginLeft: 5}}></TextInput>
+                                        </View> */}
                                         <TouchableOpacity style={{
                                             width: width * .23, marginLeft: width * .03,
-                                            borderRadius: 10, height: height * .05, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', backgroundColor: '#FDC500'
+                                            borderRadius: 10, height: 35, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', backgroundColor: '#FDC500'
                                         }}>
                                             <Text style={{ fontFamily: 'Montserrat-Medium', fontSize: 12, color: '#FFF' }} >Place Bid</Text>
                                         </TouchableOpacity>
@@ -234,20 +251,20 @@ export default class App extends React.Component {
                                 <Text style={{ fontFamily: 'Montserrat-Regular', fontSize: 12, }}>Ending On:</Text>
                                 <Text style={{ fontFamily: 'Montserrat-Regular', fontSize: 12, color: '#EE1221', marginLeft: 10 }}>{this.state.productData.date_created}</Text>
                             </View>
-                            <View style={{ marginTop: height * .01, flexDirection: 'row' }}>
+                            <View style={{ marginTop: height * .01, flexDirection: 'row', marginBottom: 10 }}>
                                 <Text style={{ fontFamily: 'Montserrat-Regular', fontSize: 12, }}>Timezone:</Text>
                                 <Text style={{ fontFamily: 'Montserrat-Regular', fontSize: 12, marginLeft: 10 }}>UTC +5.5</Text>
                             </View>
                             {this.state.btnValue === 1 ?
                                 <TouchableOpacity
                                     onPress={() => this.addToCart(this.state.productData)}
-                                    style={{ backgroundColor: 'black', height: height * .08, marginTop: height * .01, borderRadius: 10, justifyContent: 'center' }}>
+                                    style={{ backgroundColor: '#FDC500', height: height * .08, marginTop: height * .01, borderRadius: 10, justifyContent: 'center', elevation: 3, }}>
                                     <Text style={{ color: '#FFF', textAlign: 'center', fontFamily: 'Montserrat-SemiBold', fontSize: 18 }}>By Now at ₹{this.state.productData.price}</Text>
                                 </TouchableOpacity>
                                 :
                                 <TouchableOpacity
                                     onPress={() => this.props.navigation.navigate('CartPage')}
-                                    style={{ backgroundColor: 'black', height: height * .08, marginTop: height * .01, borderRadius: 10, justifyContent: 'center' }}>
+                                    style={{ backgroundColor: '#FDC500', height: height * .08, marginTop: height * .01, borderRadius: 10, justifyContent: 'center', elevation: 3 }}>
                                     <Text style={{ color: '#FFF', textAlign: 'center', fontFamily: 'Montserrat-SemiBold', fontSize: 18 }}>Go to Cart</Text>
                                 </TouchableOpacity>
                             }
@@ -286,9 +303,10 @@ export default class App extends React.Component {
                                 horizontal={true}
                                 style={{ marginBottom: height * .07, padding: 10, marginRight: 10 }}
                                 keyExtractor={(item, index) => index}
-                                data={this.state.dataSource.filter(item => {
-                                    return item.categories[0].name === this.state.selectedCategory;
-                                })}
+                                // data={this.state.dataSource.filter(item => {
+                                //     return item.categories[0].name === this.state.selectedCategory;
+                                // })}
+                                data={this.state.dataSource}
                                 extraData={this.state}
                                 renderItem={this.renderItemGrid}
                             />

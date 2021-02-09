@@ -29,7 +29,7 @@ export default class App extends React.Component {
     render() {
         const { navigate } = this.props.navigation;
         return (
-            <ScrollView style={{ flex: 1 }}>
+            <ScrollView style={{ flex: 1, backgroundColor: '#FFF' }}>
                 <ImageBackground source={require('../assets/images/SignUpBkGrnd.png')} style={{
                     width: Dimensions.get('window').width,
                     height: Dimensions.get('window').height,
@@ -52,7 +52,7 @@ export default class App extends React.Component {
                     <View style={{ alignItems: 'center', marginTop: height * .05 }}>
                         <TouchableOpacity
                             onPress={() => this.insertData()}
-                            style={[styles.textInputLogin, { alignItems: 'center', backgroundColor: '#343434', borderWidth: 0 }]}>
+                            style={[styles.textInputLogin, { alignItems: 'center', backgroundColor: '#FDC500', elevation: 3 }]}>
                             <Text style={[styles.TextiputHeader, { color: 'rgba(255,255,255,1)' }]} >CONTINUE</Text>
                         </TouchableOpacity>
 
